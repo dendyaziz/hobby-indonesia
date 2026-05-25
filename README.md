@@ -17,7 +17,7 @@ This application designed to allow administrators to seamlessly maintain product
 
 Follow these steps to get the administrative panel running on your local machine:
 
-#### 1. Clone Project
+### 1. Clone Project
 Clone from the remote repository:
 ```bash
 git clone git@github.com:upbanx/hobby-indonesia.git
