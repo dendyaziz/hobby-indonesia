@@ -17,7 +17,7 @@ This application designed to allow administrators to seamlessly maintain product
 
 Follow these steps to get the administrative panel running on your local machine:
 
-### 1. Clone Project
+#### 1. Clone Project
 Clone from the remote repository:
 ```bash
 git clone git@github.com:upbanx/hobby-indonesia.git
@@ -28,7 +28,7 @@ Copy the example environment file:
 ```bash
 cp .env.example .env
 ```
-Copy the `.env.example` into `.env` and configure your local MySQL database connection. For instance:
+Open `.env` and configure your local MySQL database connection. For instance:
 ```ini
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
