@@ -35,7 +35,7 @@ Copy the example environment file:
 cp .env.example .env
 ```
 Copy the `.env.example` into `.env` and configure your local MySQL database connection. For instance:
-```sh
+```ini
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
