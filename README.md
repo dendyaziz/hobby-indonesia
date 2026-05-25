@@ -2,22 +2,16 @@
 
 ## About The App
 
----
-
 This application designed to allow administrators to seamlessly maintain products and marketing assets showcased on the Hobby Indonesia website. 
 
 
 ## Technology Stack
-
----
 
 - **Framework**: [Laravel 13](https://laravel.com) (PHP 8.4+)
 - **Administrative Panel**: [Filament PHP v5](https://filamentphp.com) (The TALL Stack: Livewire, Alpine.js, Tailwind CSS)
 - **Database**: MySQL 9+
 - **Testing Suite**: [Pest PHP](https://pestphp.com)
 - **AI-Assisted Development**: [Laravel Boost](https://laravel.com/docs/13.x/ai) (configured with custom workspace-specific skills under `.agents/skills/`)
-
----
 
 ## Local Development
 
@@ -74,8 +68,6 @@ Verify that your local environment is correctly set up by running the test suite
 php artisan test
 ```
 
----
-
 ## Register a New User
 
 To access the `/admin` dashboard, you need to register an administrative user. You can do this quickly using the following Artisan command:
@@ -91,8 +83,6 @@ Alternatively, you can run the command non-interactively by passing options:
 ```bash
 php artisan make:filament-user --name="Admin" --email="admin@hobbyindonesia.com" --password="password" --no-interaction
 ```
-
----
 
 ## Production Deployment
 
