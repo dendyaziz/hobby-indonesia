@@ -14,8 +14,13 @@ class TestimonyForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Person Name')
                     ->required()
                     ->maxLength(30),
+                TextInput::make('subtitle')
+                    ->label('Brand Name')
+                    ->required()
+                    ->maxLength(50),
                 RichEditor::make('testimony')
                     ->required()
                     ->toolbarButtons([
