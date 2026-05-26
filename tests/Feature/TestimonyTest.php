@@ -31,6 +31,7 @@ it('can create a testimony', function () {
     Livewire::test(CreateTestimony::class)
         ->fillForm([
             'name' => 'John Doe',
+            'subtitle' => 'Acme Corp',
             'testimony' => '<strong>Great experience!</strong> Highly recommended.',
         ])
         ->call('create')
@@ -38,6 +39,7 @@ it('can create a testimony', function () {
 
     $this->assertDatabaseHas('testimonies', [
         'name' => 'John Doe',
+        'subtitle' => 'Acme Corp',
         'testimony' => '<strong>Great experience!</strong> Highly recommended.',
     ]);
 });

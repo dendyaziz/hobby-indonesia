@@ -19,6 +19,7 @@ class TestimonyFactory extends Factory
     {
         return [
             'name' => substr(fake()->name(), 0, 30),
+            'subtitle' => substr(fake()->company(), 0, 50),
             'testimony' => fake()->paragraph(),
             'image' => null,
         ];

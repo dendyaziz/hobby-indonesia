@@ -16,6 +16,11 @@ class TestimoniesTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Person Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('subtitle')
+                    ->label('Brand Name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('testimony')
