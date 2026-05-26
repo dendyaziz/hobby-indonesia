@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Testimonies\Schemas;
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -16,7 +16,7 @@ class TestimonyForm
                 TextInput::make('name')
                     ->required()
                     ->maxLength(30),
-                MarkdownEditor::make('testimony')
+                RichEditor::make('testimony')
                     ->required()
                     ->toolbarButtons([
                         'bold',

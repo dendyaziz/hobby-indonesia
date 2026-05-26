@@ -20,7 +20,7 @@ class TestimoniesTable
                     ->sortable(),
                 TextColumn::make('testimony')
                     ->limit(50)
-                    ->markdown()
+                    ->html()
                     ->searchable(),
                 ImageColumn::make('image')
                     ->disk('s3'),

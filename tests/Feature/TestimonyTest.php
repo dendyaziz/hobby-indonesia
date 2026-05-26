@@ -31,14 +31,14 @@ it('can create a testimony', function () {
     Livewire::test(CreateTestimony::class)
         ->fillForm([
             'name' => 'John Doe',
-            'testimony' => '**Great experience!** Highly recommended.',
+            'testimony' => '<strong>Great experience!</strong> Highly recommended.',
         ])
         ->call('create')
         ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas('testimonies', [
         'name' => 'John Doe',
-        'testimony' => '**Great experience!** Highly recommended.',
+        'testimony' => '<strong>Great experience!</strong> Highly recommended.',
     ]);
 });
 
