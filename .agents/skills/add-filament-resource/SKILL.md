@@ -68,3 +68,21 @@ Use this skill whenever you are tasked with creating a new model, database migra
 
 8. **Pest Integration Testing**:
    - Write robust, functional Pest tests under `tests/Feature/<ModelName>Test.php` asserting successful index and create page loading, form creation validations, and editing/saving capabilities. Use `RefreshDatabase` and fake S3 storage (`Storage::fake('s3')`) if file uploads are executed during testing.
+
+9. **Navigation Grouping, Icons, & Parent Breadcrumbs**:
+   - **Collapsible Sidebar Folders**: Register collapsible group folders in your panel provider (e.g. `AdminPanelProvider.php`) to group related resources cleanly in the sidebar:
+     ```php
+     ->navigationGroups([
+         NavigationGroup::make()
+             ->label('Homepage')
+             ->icon(Heroicon::OutlinedHome)
+             ->collapsed(),
+     ])
+     ```
+   - **Union Type Safety**: Subclasses overriding `$navigationGroup` must match the parent signature union type exactly. Always use the `use UnitEnum;` import and define:
+     ```php
+     protected static string|UnitEnum|null $navigationGroup = 'Homepage';
+     ```
+   - **Proper UX Icon Rule (No Clutter)**: Either the parent folder or its child items can have icons, but **not both**. When placing items inside a parent navigation group folder that has a main icon, set the child resource's `$navigationIcon` to `null` to render them as clean, text-only indented links.
+   - **Custom Parent Breadcrumbs**: Prepend the parent navigation group folder label (e.g., `'Homepage'` or `'Reseller'`) dynamically as a **non-clickable parent breadcrumb** (using a `'#'` key) at the beginning of the breadcrumbs trail (e.g. `Homepage > Hero Banners > List`).
+     - To keep the codebase DRY, simply import and use the shared `HasGroupBreadcrumbs` trait inside the resource's three page classes (`List`, `Create`, `Edit`).
