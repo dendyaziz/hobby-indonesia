@@ -166,3 +166,37 @@ it('validates that ended_at cannot be before started_at', function () {
         ->call('create')
         ->assertHasFormErrors(['ended_at']);
 });
+
+it('only requires ended_at if started_at is defined', function () {
+    // 1. started_at is null, ended_at is null -> should succeed!
+    Livewire::test(CreateHeroBanner::class)
+        ->fillForm([
+            'title' => 'No Dates Banner',
+            'image' => UploadedFile::fake()->image('nodate.jpg'),
+            'type' => 'none',
+            'status' => 'active',
+            'started_at' => null,
+            'ended_at' => null,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $this->assertDatabaseHas('banners', [
+        'title' => 'No Dates Banner',
+        'started_at' => null,
+        'ended_at' => null,
+    ]);
+
+    // 2. started_at is set, ended_at is null -> should fail validation!
+    Livewire::test(CreateHeroBanner::class)
+        ->fillForm([
+            'title' => 'Missing Ended At Banner',
+            'image' => UploadedFile::fake()->image('missingended.jpg'),
+            'type' => 'none',
+            'status' => 'active',
+            'started_at' => now()->toDateString(),
+            'ended_at' => null,
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['ended_at' => 'required']);
+});
