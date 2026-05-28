@@ -47,12 +47,11 @@ class BannerForm
 
                 DatePicker::make('start_date')
                     ->native(false)
-                    ->nullable()
-                    ->live(),
+                    ->nullable(),
 
                 DatePicker::make('end_date')
                     ->native(false)
-                    ->required(fn (Get $get) => filled($get('start_date')))
+                    ->nullable()
                     ->afterOrEqual('start_date'),
 
                 Radio::make('status')
