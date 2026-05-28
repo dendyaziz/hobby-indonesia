@@ -200,3 +200,26 @@ it('only requires ended_at if started_at is defined', function () {
         ->call('create')
         ->assertHasFormErrors(['ended_at' => 'required']);
 });
+
+it('shows status as Scheduled if active and started_at is in the future', function () {
+    $futureBanner = Banner::factory()->create([
+        'title' => 'Future Banner',
+        'placement' => 'homepage--hero',
+        'status' => 'active',
+        'started_at' => now()->addDays(5)->startOfDay(),
+        'ended_at' => now()->addDays(10)->startOfDay(),
+    ]);
+
+    $activeBanner = Banner::factory()->create([
+        'title' => 'Active Banner',
+        'placement' => 'homepage--hero',
+        'status' => 'active',
+        'started_at' => now()->subDays(2)->startOfDay(),
+        'ended_at' => now()->addDays(2)->startOfDay(),
+    ]);
+
+    Livewire::test(ListHeroBanners::class)
+        ->assertCanRenderTableColumn('status')
+        ->assertTableColumnFormattedStateSet('status', 'Scheduled', record: $futureBanner)
+        ->assertTableColumnFormattedStateSet('status', 'Active', record: $activeBanner);
+});
