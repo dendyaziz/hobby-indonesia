@@ -181,6 +181,11 @@ Check sibling files, related controllers, models, or tests for established patte
 - No JS/CSS in Blade, no HTML in PHP classes
 - Code should be readable; comments only for config files
 
+### 20. Laravel Boost Integration → `rules/boost.md`
+
+- Use Laravel Boost's generated configurations and MCP tools (`boost.json`, `.mcp.json`) to keep the workspace optimized for AI-assisted development.
+- Adhere to the defined schemas to ensure the AI agent operates under correct boundaries and accesses tools securely and efficiently.
+
 ## How to Apply
 
 Always use a sub-agent to read rule files and explore this skill's content.
