@@ -33,7 +33,7 @@ class TestimonyForm
                     ->columnSpanFull(),
                 FileUpload::make('image')
                     ->image()
-                    ->disk('s3')
+                    ->imageEditor()
                     ->directory('testimonies'),
             ]);
     }
