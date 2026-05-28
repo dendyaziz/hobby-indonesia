@@ -45,15 +45,15 @@ class BannerForm
                     ->visible(fn (Get $get) => $get('type') === 'link')
                     ->required(fn (Get $get) => $get('type') === 'link'),
 
-                DatePicker::make('started_at')
+                DatePicker::make('start_date')
                     ->native(false)
                     ->nullable()
                     ->live(),
 
-                DatePicker::make('ended_at')
+                DatePicker::make('end_date')
                     ->native(false)
-                    ->required(fn (Get $get) => filled($get('started_at')))
-                    ->afterOrEqual('started_at'),
+                    ->required(fn (Get $get) => filled($get('start_date')))
+                    ->afterOrEqual('start_date'),
 
                 Radio::make('status')
                     ->options([

@@ -35,7 +35,7 @@ it('can create a hero banner and automatically assign position and placement', f
             'image' => UploadedFile::fake()->image('hero1.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -53,7 +53,7 @@ it('can create a hero banner and automatically assign position and placement', f
             'image' => UploadedFile::fake()->image('hero2.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -73,7 +73,7 @@ it('scopes position sequences separately for each placement', function () {
             'image' => UploadedFile::fake()->image('heroa.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -91,7 +91,7 @@ it('scopes position sequences separately for each placement', function () {
             'image' => UploadedFile::fake()->image('proda.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -109,7 +109,7 @@ it('scopes position sequences separately for each placement', function () {
             'image' => UploadedFile::fake()->image('thirda.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -127,7 +127,7 @@ it('scopes position sequences separately for each placement', function () {
             'image' => UploadedFile::fake()->image('resellera.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -147,75 +147,75 @@ it('requires url when type is link', function () {
             'type' => 'link',
             'url' => '', // empty
             'status' => 'active',
-            'ended_at' => now()->addDays(5)->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
         ])
         ->call('create')
         ->assertHasFormErrors(['url' => 'required']);
 });
 
-it('validates that ended_at cannot be before started_at', function () {
+it('validates that end_date cannot be before start_date', function () {
     Livewire::test(CreateHeroBanner::class)
         ->fillForm([
             'title' => 'Date Test Banner',
             'image' => UploadedFile::fake()->image('date.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'started_at' => now()->toDateString(),
-            'ended_at' => now()->subDay()->toDateString(), // before started_at!
+            'start_date' => now()->toDateString(),
+            'end_date' => now()->subDay()->toDateString(), // before start_date!
         ])
         ->call('create')
-        ->assertHasFormErrors(['ended_at']);
+        ->assertHasFormErrors(['end_date']);
 });
 
-it('only requires ended_at if started_at is defined', function () {
-    // 1. started_at is null, ended_at is null -> should succeed!
+it('only requires end_date if start_date is defined', function () {
+    // 1. start_date is null, end_date is null -> should succeed!
     Livewire::test(CreateHeroBanner::class)
         ->fillForm([
             'title' => 'No Dates Banner',
             'image' => UploadedFile::fake()->image('nodate.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'started_at' => null,
-            'ended_at' => null,
+            'start_date' => null,
+            'end_date' => null,
         ])
         ->call('create')
         ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas('banners', [
         'title' => 'No Dates Banner',
-        'started_at' => null,
-        'ended_at' => null,
+        'start_date' => null,
+        'end_date' => null,
     ]);
 
-    // 2. started_at is set, ended_at is null -> should fail validation!
+    // 2. start_date is set, end_date is null -> should fail validation!
     Livewire::test(CreateHeroBanner::class)
         ->fillForm([
             'title' => 'Missing Ended At Banner',
             'image' => UploadedFile::fake()->image('missingended.jpg'),
             'type' => 'none',
             'status' => 'active',
-            'started_at' => now()->toDateString(),
-            'ended_at' => null,
+            'start_date' => now()->toDateString(),
+            'end_date' => null,
         ])
         ->call('create')
-        ->assertHasFormErrors(['ended_at' => 'required']);
+        ->assertHasFormErrors(['end_date' => 'required']);
 });
 
-it('shows status as Scheduled if active and started_at is in the future', function () {
+it('shows status as Scheduled if active and start_date is in the future', function () {
     $futureBanner = Banner::factory()->create([
         'title' => 'Future Banner',
         'placement' => 'homepage--hero',
         'status' => 'active',
-        'started_at' => now()->addDays(5)->startOfDay(),
-        'ended_at' => now()->addDays(10)->startOfDay(),
+        'start_date' => now()->addDays(5)->startOfDay(),
+        'end_date' => now()->addDays(10)->startOfDay(),
     ]);
 
     $activeBanner = Banner::factory()->create([
         'title' => 'Active Banner',
         'placement' => 'homepage--hero',
         'status' => 'active',
-        'started_at' => now()->subDays(2)->startOfDay(),
-        'ended_at' => now()->addDays(2)->startOfDay(),
+        'start_date' => now()->subDays(2)->startOfDay(),
+        'end_date' => now()->addDays(2)->startOfDay(),
     ]);
 
     Livewire::test(ListHeroBanners::class)

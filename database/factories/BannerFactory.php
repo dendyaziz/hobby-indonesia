@@ -24,8 +24,8 @@ class BannerFactory extends Factory
             'type' => 'none',
             'url' => null,
             'status' => 'active',
-            'started_at' => now(),
-            'ended_at' => now()->addDays(7),
+            'start_date' => now(),
+            'end_date' => now()->addDays(7),
         ];
     }
 }

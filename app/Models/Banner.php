@@ -18,13 +18,13 @@ class Banner extends Model
         'type',
         'url',
         'status',
-        'started_at',
-        'ended_at',
+        'start_date',
+        'end_date',
     ];
 
     protected $casts = [
-        'started_at' => 'date',
-        'ended_at' => 'date',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     protected static function booted(): void

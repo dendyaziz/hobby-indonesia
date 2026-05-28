@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('type');
             $table->string('url')->nullable();
             $table->string('status')->default('active');
-            $table->date('started_at')->nullable();
-            $table->date('ended_at')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->timestamps();
         });
     }

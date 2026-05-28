@@ -35,12 +35,12 @@ class BannersTable
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state, \App\Models\Banner $record): string =>
-                        $state === 'active' && $record->started_at && $record->started_at->isFuture()
+                        $state === 'active' && $record->start_date && $record->start_date->isFuture()
                             ? 'Scheduled'
                             : Str::headline($state)
                     )
                     ->color(fn (string $state, \App\Models\Banner $record): string =>
-                        $state === 'active' && $record->started_at && $record->started_at->isFuture()
+                        $state === 'active' && $record->start_date && $record->start_date->isFuture()
                             ? 'warning'
                             : match (strtolower($state)) {
                                 'active' => 'success',
@@ -49,12 +49,12 @@ class BannersTable
                             }
                     ),
 
-                TextColumn::make('started_at')
+                TextColumn::make('start_date')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('ended_at')
+                TextColumn::make('end_date')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
