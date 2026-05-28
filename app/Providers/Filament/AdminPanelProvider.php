@@ -41,6 +41,16 @@ class AdminPanelProvider extends PanelProvider
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
+            ->navigationGroups([
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Homepage')
+                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedHome)
+                    ->collapsed(),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Reseller')
+                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedUsers)
+                    ->collapsed(),
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
