@@ -223,3 +223,12 @@ it('shows status as Scheduled if active and started_at is in the future', functi
         ->assertTableColumnFormattedStateSet('status', 'Scheduled', record: $futureBanner)
         ->assertTableColumnFormattedStateSet('status', 'Active', record: $activeBanner);
 });
+
+it('includes the navigation group in breadcrumbs', function () {
+    $breadcrumbs = Livewire::test(ListHeroBanners::class)
+        ->instance()
+        ->getBreadcrumbs();
+
+    expect($breadcrumbs)->toHaveKey('#');
+    expect($breadcrumbs['#'])->toBe('Homepage');
+});
