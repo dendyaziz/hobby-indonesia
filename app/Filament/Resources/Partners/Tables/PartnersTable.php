@@ -19,8 +19,7 @@ class PartnersTable
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                ImageColumn::make('image')
-                    ->disk('s3'),
+                ImageColumn::make('image'),
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => Str::headline($state))

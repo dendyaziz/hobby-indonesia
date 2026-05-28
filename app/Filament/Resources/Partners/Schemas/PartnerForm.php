@@ -19,7 +19,6 @@ class PartnerForm
                     ->maxLength(30),
                 FileUpload::make('image')
                     ->image()
-                    ->disk('s3')
                     ->directory('partners')
                     ->required(),
                 Radio::make('status')
