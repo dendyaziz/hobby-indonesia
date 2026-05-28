@@ -29,16 +29,17 @@ class BannersTable
 
                 TextColumn::make('type')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => Str::headline($state)),
+                    ->formatStateUsing(fn (string $state): string => Str::headline($state))
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state, \App\Models\Banner $record): string => 
+                    ->formatStateUsing(fn (string $state, \App\Models\Banner $record): string =>
                         $state === 'active' && $record->started_at && $record->started_at->isFuture()
                             ? 'Scheduled'
                             : Str::headline($state)
                     )
-                    ->color(fn (string $state, \App\Models\Banner $record): string => 
+                    ->color(fn (string $state, \App\Models\Banner $record): string =>
                         $state === 'active' && $record->started_at && $record->started_at->isFuture()
                             ? 'warning'
                             : match (strtolower($state)) {
@@ -50,11 +51,23 @@ class BannersTable
 
                 TextColumn::make('started_at')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('ended_at')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('position')
             ->reorderable('position')
