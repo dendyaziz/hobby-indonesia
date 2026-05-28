@@ -16,6 +16,10 @@ class PartnersTable
     {
         return $table
             ->columns([
+                TextColumn::make('position')
+                    ->label('Sequence')
+                    ->prefix('#')
+                    ->sortable(),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
