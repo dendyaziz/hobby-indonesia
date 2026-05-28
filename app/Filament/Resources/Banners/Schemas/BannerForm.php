@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Filament\Resources\Banners\Schemas;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
+
+class BannerForm
+{
+    public static function configure(Schema $schema, string $placement): Schema
+    {
+        return $schema
+            ->columns(1)
+            ->components([
+                Hidden::make('placement')
+                    ->default($placement),
+
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(100),
+
+                FileUpload::make('image')
+                    ->image()
+                    ->imageEditor()
+                    ->directory('banners')
+                    ->required(),
+
+                Radio::make('type')
+                    ->options([
+                        'none' => 'None',
+                        'link' => 'Link',
+                    ])
+                    ->required()
+                    ->default('none')
+                    ->live(),
+
+                TextInput::make('url')
+                    ->url()
+                    ->maxLength(255)
+                    ->visible(fn (Get $get) => $get('type') === 'link')
+                    ->required(fn (Get $get) => $get('type') === 'link'),
+
+                DatePicker::make('started_at')
+                    ->native(false)
+                    ->nullable(),
+
+                DatePicker::make('ended_at')
+                    ->native(false)
+                    ->required()
+                    ->afterOrEqual('started_at'),
+
+                Radio::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ])
+                    ->required()
+                    ->default('active'),
+            ]);
+    }
+}
