@@ -24,7 +24,7 @@ class ManageSocialMedia extends Page
 
     protected static ?string $navigationLabel = 'Social Media';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShare;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAtSymbol;
 
     protected static ?int $navigationSort = 10;
 
