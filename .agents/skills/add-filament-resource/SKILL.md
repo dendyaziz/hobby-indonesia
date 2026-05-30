@@ -86,3 +86,22 @@ Use this skill whenever you are tasked with creating a new model, database migra
    - **Proper UX Icon Rule (No Clutter)**: Either the parent folder or its child items can have icons, but **not both**. When placing items inside a parent navigation group folder that has a main icon, set the child resource's `$navigationIcon` to `null` to render them as clean, text-only indented links.
    - **Custom Parent Breadcrumbs**: Prepend the parent navigation group folder label (e.g., `'Homepage'` or `'Reseller'`) dynamically as a **non-clickable parent breadcrumb** (using a `'#'` key) at the beginning of the breadcrumbs trail (e.g. `Homepage > Hero Banners > List`).
      - To keep the codebase DRY, simply import and use the shared `HasGroupBreadcrumbs` trait inside the resource's three page classes (`List`, `Create`, `Edit`).
+
+10. **Singular Filament Resources**:
+    - **Concept**: For models representing singular system settings or configuration pages (e.g., Social Media links, Contact Details), create a custom Filament Page rather than a full multi-page CRUD Resource.
+    - **Model Setup**: Set up standard Eloquent traits (`HasUuids`) and define fillable attributes.
+    - **Page Setup**: Create a Page class extending `Filament\Pages\Page`, overriding `$view` with a simple blade file that renders the form (`{{ $this->form }}`).
+    - **Record Handling**: Implement a `getRecord()` helper method that safely retrieves or creates the singular record via `TheModel::firstOrCreate()`. Mount the form using:
+      ```php
+      public function mount(): void
+      {
+          $this->form->fill($this->getRecord()?->attributesToArray());
+      }
+      ```
+    - **Seeding**: Always seed the default singular record using `firstOrCreate()` within `DatabaseSeeder.php` rather than directly in database migrations, allowing standard application-wide seeding practices.
+
+11. **Database Migrations Safety**:
+    - **NEVER use or suggest `php artisan migrate:fresh`**: This command wipes the entire database which will reset all user-entered records, even during local development.
+    - **Migration Modification Flow**: If a migration needs changes or a table needs recreation:
+      - Instruct the user to use target rollbacks (e.g. `php artisan migrate:rollback --step=1` to roll back the single last migration).
+      - Modify the specific migration file and run `php artisan migrate` to re-apply the schema changes safely.
