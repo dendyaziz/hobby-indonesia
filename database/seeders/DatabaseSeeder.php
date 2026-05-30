@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Contact;
 use App\Models\SocialMedia;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,15 +17,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        if (! User::where('email', 'test@example.com')->exists()) {
-            User::factory()->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-            ]);
-        }
-
         SocialMedia::firstOrCreate();
+
+        Contact::firstOrCreate([], [
+            'company_name' => 'Hobby Indonesia',
+            'telephone' => '+6282122538796',
+            'email' => 'hobbyindonesia@gmail.com',
+        ]);
     }
 }
