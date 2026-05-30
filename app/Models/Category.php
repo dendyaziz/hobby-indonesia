@@ -20,6 +20,24 @@ class Category extends Model
     ];
 
     /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::deleting(function (Category $category) {
+            if ($category->subCategories()->exists()) {
+                \Filament\Notifications\Notification::make()
+                    ->warning()
+                    ->title('Cannot delete category')
+                    ->body("Category \"{$category->name}\" has subcategories and cannot be deleted.")
+                    ->send();
+
+                return false;
+            }
+        });
+    }
+
+    /**
      * Get the parent category.
      *
      * @return BelongsTo<Category, $this>

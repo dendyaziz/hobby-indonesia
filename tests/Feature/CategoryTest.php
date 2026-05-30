@@ -134,5 +134,10 @@ it('restricts deleting a parent category that has subcategories', function () {
         'parent_category_id' => $parent->id,
     ]);
 
-    expect(fn () => $parent->delete())->toThrow(\Illuminate\Database\QueryException::class);
+    $deleted = $parent->delete();
+
+    expect($deleted)->toBeFalse();
+    $this->assertDatabaseHas('categories', [
+        'id' => $parent->id,
+    ]);
 });
