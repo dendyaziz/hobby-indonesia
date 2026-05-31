@@ -8,6 +8,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class EventForm
 {
     public static function configure(Schema $schema): Schema
@@ -23,9 +25,14 @@ class EventForm
                     ->imageEditor()
                     ->directory('events'),
                 Select::make('partners')
-                    ->relationship('partners', 'name')
+                    ->relationship(
+                        name: 'partners',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->latest(),
+                    )
                     ->multiple()
-                    ->searchable(),
+                    ->searchable()
+                    ->preload(),
                 RichEditor::make('description')
                     ->required()
                     ->toolbarButtons([
