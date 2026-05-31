@@ -7,28 +7,24 @@ Use this skill whenever you are tasked with creating a new model, database migra
 
 ## Step-by-Step Generation Flow
 
-1. **Ask about Soft Deletes (Mandatory)**:
-   - **Rule**: Before writing any code, always ask the user whether the resource should support soft deletes.
-   - **Implementation**: If yes, include `$table->softDeletes()` in the migration, use the `SoftDeletes` trait on the Eloquent model, and enable soft delete actions/filters in the Filament resource.
-
-2. **Model, Migration, and Factory Generation**:
+1. **Model, Migration, and Factory Generation**:
    - Run the Artisan model generator:
      ```bash
      php artisan make:model <ModelName> -m -f
      ```
 
-3. **Database Schema Design Rules**:
+2. **Database Schema Design Rules**:
    - **Primary Key**: Always configure UUID v7 as the primary key (`$table->uuid('id')->primary()`) and apply the `Illuminate\Database\Eloquent\Concerns\HasUuids` trait on the model.
    - **Varchar Lengths**: Limit `varchar` columns logically if possible (e.g. `name` columns for people, brands, or titles should be limited to 30 characters: `$table->string('name', 30)`).
    - **Text Columns**: For descriptive text or columns that can exceed short varchar limits, always use the `text` data type.
 
-4. **Filament Resource Generation**:
+3. **Filament Resource Generation**:
    - Run the Filament resource generator with automatic schema generation and no-interaction flags:
      ```bash
      php artisan make:filament-resource <ModelName> --generate --no-interaction
      ```
 
-5. **File & Image Upload Guidelines**:
+4. **File & Image Upload Guidelines**:
    - **Image Handling**: If a file upload is specifically for an image, always apply the `->image()` validator and `->imageEditor()` to allow users to edit the uploaded image on the form's `FileUpload` component. Use an `ImageColumn` on the table to display preview thumbnails.
      - **Form Example**:
        ```php
@@ -42,14 +38,14 @@ Use this skill whenever you are tasked with creating a new model, database migra
        ImageColumn::make('image')
        ```
 
-6. **Form & Table Styling Conventions**:
+5. **Form & Table Styling Conventions**:
    - **Status Badges (Capitalization)**: For Filament table columns displaying a status using a text badge, capitalize it using:
      ```php
      ->formatStateUsing(fn (string $state): string => \Illuminate\Support\Str::headline($state))
      ```
    - **Status Form Fields**: Always use the `Radio` button component (e.g., `Radio::make('status')`) instead of `Select` or `Checkbox` for status fields.
 
-7. **Reorderable Models & Columns**:
+6. **Reorderable Models & Columns**:
    - **Database Migration**: If a model uses `->reorderable('column_name')`, select the database integer type for the orderable column based on the expected maximum records:
      - Use `unsignedTinyInteger('column_name')` for models expected to have <= 255 records (e.g., banners, categories, partner companies).
      - Use `unsignedSmallInteger('column_name')` for models expected to have > 255 but <= 65,535 records (e.g., products/board games).
@@ -66,10 +62,10 @@ Use this skill whenever you are tasked with creating a new model, database migra
    - **Filament Form Layout**: Hide/omit the orderable column completely from the Filament resource form layout since it must only be changed via the table reordering interface.
    - **Filament Table Layout**: Always show/include the orderable column in the table columns (e.g. `TextColumn::make('position')->sortable()`) so the list remains explicitly ordered and verifiable.
 
-8. **Pest Integration Testing**:
+7. **Pest Integration Testing**:
    - Write robust, functional Pest tests under `tests/Feature/<ModelName>Test.php` asserting successful index and create page loading, form creation validations, and editing/saving capabilities. Use `RefreshDatabase` and fake S3 storage (`Storage::fake('s3')`) if file uploads are executed during testing.
 
-9. **Navigation Grouping, Icons, & Parent Breadcrumbs**:
+8. **Navigation Grouping, Icons, & Parent Breadcrumbs**:
    - **Collapsible Sidebar Folders**: Register collapsible group folders in your panel provider (e.g. `AdminPanelProvider.php`) to group related resources cleanly in the sidebar:
      ```php
      ->navigationGroups([
@@ -87,7 +83,7 @@ Use this skill whenever you are tasked with creating a new model, database migra
    - **Custom Parent Breadcrumbs**: Prepend the parent navigation group folder label (e.g., `'Homepage'` or `'Reseller'`) dynamically as a **non-clickable parent breadcrumb** (using a `'#'` key) at the beginning of the breadcrumbs trail (e.g. `Homepage > Hero Banners > List`).
      - To keep the codebase DRY, simply import and use the shared `HasGroupBreadcrumbs` trait inside the resource's three page classes (`List`, `Create`, `Edit`).
 
-10. **Singular Filament Resources**:
+9. **Singular Filament Resources**:
     - **Concept**: For models representing singular system settings or configuration pages (e.g., Social Media links, Contact Details), create a custom Filament Page rather than a full multi-page CRUD Resource.
     - **Model Setup**: Set up standard Eloquent traits (`HasUuids`) and define fillable attributes.
     - **Page Setup**: Create a Page class extending `Filament\Pages\Page`, overriding `$view` with a simple blade file that renders the form (`{{ $this->form }}`).
@@ -100,7 +96,7 @@ Use this skill whenever you are tasked with creating a new model, database migra
       ```
     - **Seeding**: Always seed the default singular record using `firstOrCreate()` within `DatabaseSeeder.php` rather than directly in database migrations, allowing standard application-wide seeding practices.
 
-11. **Database Migrations Safety**:
+10. **Database Migrations Safety**:
     - **NEVER use or suggest `php artisan migrate:fresh`**: This command wipes the entire database which will reset all user-entered records, even during local development.
     - **Migration Modification Flow**: If a migration needs changes or a table needs recreation:
       - Instruct the user to use target rollbacks (e.g. `php artisan migrate:rollback --step=1` to roll back the single last migration).
