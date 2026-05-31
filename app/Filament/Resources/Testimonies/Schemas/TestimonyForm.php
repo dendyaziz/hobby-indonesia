@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Testimonies\Schemas;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -31,10 +31,10 @@ class TestimonyForm
                         'redo',
                     ])
                     ->columnSpanFull(),
-                FileUpload::make('image')
+                SpatieMediaLibraryFileUpload::make('image')
+                    ->collection('testimonies')
                     ->image()
-                    ->imageEditor()
-                    ->directory('testimonies'),
+                    ->imageEditor(),
             ]);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Partners\Schemas;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -17,10 +17,10 @@ class PartnerForm
                 TextInput::make('name')
                     ->required()
                     ->maxLength(30),
-                FileUpload::make('image')
+                SpatieMediaLibraryFileUpload::make('image')
+                    ->collection('partners')
                     ->image()
                     ->imageEditor()
-                    ->directory('partners')
                     ->required(),
                 Radio::make('status')
                     ->options([

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Events\Schemas;
 
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -20,10 +20,10 @@ class EventForm
                 TextInput::make('title')
                     ->required()
                     ->maxLength(100),
-                FileUpload::make('image')
+                SpatieMediaLibraryFileUpload::make('image')
+                    ->collection('events')
                     ->image()
-                    ->imageEditor()
-                    ->directory('events'),
+                    ->imageEditor(),
                 Select::make('partners')
                     ->relationship(
                         name: 'partners',

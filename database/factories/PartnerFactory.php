@@ -19,7 +19,6 @@ class PartnerFactory extends Factory
     {
         return [
             'name' => substr($this->faker->company(), 0, 30),
-            'image' => null,
             'status' => 'active',
         ];
     }

@@ -19,7 +19,6 @@ class EventFactory extends Factory
     {
         return [
             'title' => $this->faker->realText(50),
-            'image' => 'events/' . $this->faker->uuid() . '.jpg',
             'description' => '<p><strong>' . $this->faker->sentence() . '</strong></p><p>' . $this->faker->paragraph(2) . '</p>',
         ];
     }

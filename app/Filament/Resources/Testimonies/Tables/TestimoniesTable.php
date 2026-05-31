@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Testimonies\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -28,7 +28,9 @@ class TestimoniesTable
                     ->html()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                ImageColumn::make('image')
+                SpatieMediaLibraryImageColumn::make('image')
+                    ->collection('testimonies')
+                    ->conversion('small')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()

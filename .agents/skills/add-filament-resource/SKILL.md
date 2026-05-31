@@ -25,18 +25,65 @@ Use this skill whenever you are tasked with creating a new model, database migra
      ```
 
 4. **File & Image Upload Guidelines**:
-   - **Image Handling**: If a file upload is specifically for an image, always apply the `->image()` validator and `->imageEditor()` to allow users to edit the uploaded image on the form's `FileUpload` component. Use an `ImageColumn` on the table to display preview thumbnails.
+   - **Polymorphic Media Storage**: Do NOT define an `image` column in database migrations. Instead, use the **Spatie Laravel Media Library** polymorphic `media` table structure.
+     > [!IMPORTANT]
+     > Because all models in this application use UUIDs as primary keys, the default `$table->morphs('model')` in the Spatie media migration MUST be changed to `$table->uuidMorphs('model')`. Failing to do so will result in SQL truncation errors when trying to insert string UUIDs into an unsigned big integer column.
+     > [!TIP]
+     > By default, Spatie Media Library processes conversions in a background queue. To prevent missing/unprocessed conversions in local development (when queue workers aren't active), ensure `QUEUE_CONVERSIONS_BY_DEFAULT=false` is declared in the `.env` file so conversions run synchronously upon upload.
+   - **Eloquent Model Configuration**:
+     - Implement `Spatie\MediaLibrary\HasMedia` and use the `Spatie\MediaLibrary\InteractsWithMedia` trait.
+     - Register the media collection and define responsive media conversions using **height only** so that the image engine scales the width proportionally, preserving the original aspect ratio without distortion.
+     - Register a `'small'` conversion `height(40)` for list/table previews, and an optional `'thumbnail'` conversion for public views (e.g. `height(150)` for logos, `height(400)` for banners/events). Always force conversions to modern WebP format by chaining `->format('webp')`.
+     - **Model Example**:
+       ```php
+       use Spatie\MediaLibrary\HasMedia;
+       use Spatie\MediaLibrary\InteractsWithMedia;
+       use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
+       class Banner extends Model implements HasMedia
+       {
+           use InteractsWithMedia;
+
+           public function registerMediaCollections(): void
+           {
+               $this
+                   ->addMediaCollection('banners')
+                   ->registerMediaConversions(function (Media $media): void {
+                       $this->addMediaConversion('small')
+                           ->height(40)
+                           ->format('webp');
+
+                       $this->addMediaConversion('thumbnail')
+                           ->height(400)
+                           ->format('webp');
+                   });
+           }
+       }
+       ```
+   - **Filament Form Layout**:
+     - Use the `SpatieMediaLibraryFileUpload` component and chain `->collection('collection_name')`. Include `->image()` and `->imageEditor()` to allow editing.
      - **Form Example**:
        ```php
-       FileUpload::make('image')
+       use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+       SpatieMediaLibraryFileUpload::make('image')
+           ->collection('banners')
            ->image()
            ->imageEditor()
-           ->directory('plural-resource-name')
+           ->required()
        ```
+   - **Filament Table Layout**:
+     - Use the `SpatieMediaLibraryImageColumn` component, specifying the collection and targeting the lightweight `'small'` conversion.
      - **Table Example**:
        ```php
-       ImageColumn::make('image')
+       use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+
+       SpatieMediaLibraryImageColumn::make('image')
+           ->collection('banners')
+           ->conversion('small')
        ```
+   - **Database Factories**:
+     - Do NOT add an `'image'` key in the factory's default `definition()` array since there is no `image` database column. Seed media attachments, if needed, via `afterCreating` hooks using Spatie's faked media APIs in feature tests.
 
 5. **Form & Table Styling Conventions**:
    - **Status Badges (Capitalization)**: For Filament table columns displaying a status using a text badge, capitalize it using:

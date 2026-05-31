@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Banners\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -25,7 +25,9 @@ class BannersTable
                     ->searchable()
                     ->sortable(),
 
-                ImageColumn::make('image'),
+                SpatieMediaLibraryImageColumn::make('image')
+                    ->collection('banners')
+                    ->conversion('small'),
 
                 TextColumn::make('type')
                     ->badge()

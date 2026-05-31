@@ -19,7 +19,6 @@ class BannerFactory extends Factory
     {
         return [
             'title' => substr($this->faker->sentence(), 0, 100),
-            'image' => 'banners/dummy.jpg',
             'placement' => 'homepage--hero',
             'type' => 'none',
             'url' => null,

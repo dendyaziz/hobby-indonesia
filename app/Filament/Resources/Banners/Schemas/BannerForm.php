@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Banners\Schemas;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Get;
@@ -24,10 +24,10 @@ class BannerForm
                     ->required()
                     ->maxLength(100),
 
-                FileUpload::make('image')
+                SpatieMediaLibraryFileUpload::make('image')
+                    ->collection('banners')
                     ->image()
                     ->imageEditor()
-                    ->directory('banners')
                     ->required(),
 
                 Radio::make('type')

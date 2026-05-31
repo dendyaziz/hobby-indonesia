@@ -1,19 +1,22 @@
 <?php
 
 namespace App\Models;
-
+ 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Banner extends Model
+class Banner extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\BannerFactory> */
     use HasFactory, HasUuids;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'title',
-        'image',
         'placement',
         'type',
         'url',
@@ -32,5 +35,22 @@ class Banner extends Model
         static::creating(function (Banner $banner) {
             $banner->position = (static::where('placement', $banner->placement)->max('position') ?? 0) + 1;
         });
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('banners')
+            ->registerMediaConversions(function (Media $media): void {
+                $this
+                    ->addMediaConversion('small')
+                    ->height(40)
+                    ->format('webp');
+
+                $this
+                    ->addMediaConversion('thumbnail')
+                    ->height(400)
+                    ->format('webp');
+            });
     }
 }

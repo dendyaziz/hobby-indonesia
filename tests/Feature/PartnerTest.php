@@ -64,13 +64,11 @@ it('can create a partner and auto increment position', function () {
 });
 
 it('can edit a partner', function () {
-    Storage::disk('s3')->put('partners/original.jpg', 'fake content');
-
     $partner = Partner::factory()->create([
         'name' => 'Original Partner Name',
         'status' => 'active',
-        'image' => 'partners/original.jpg',
     ]);
+    $partner->addMedia(UploadedFile::fake()->image('partner.jpg'))->toMediaCollection('partners');
 
     Livewire::test(EditPartner::class, [
         'record' => $partner->getKey(),
