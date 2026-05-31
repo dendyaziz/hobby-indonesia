@@ -44,6 +44,10 @@ Use this skill whenever you are tasked with creating a new model, database migra
      ->formatStateUsing(fn (string $state): string => \Illuminate\Support\Str::headline($state))
      ```
    - **Status Form Fields**: Always use the `Radio` button component (e.g., `Radio::make('status')`) instead of `Select` or `Checkbox` for status fields.
+   - **Relationship Select Fields (Preloading & Sorting)**:
+     - **Preloading**: If the Select options are retrieved from another model (relationship options), always append `->preload()` to ensure that the dropdown option suggestions are loaded when the page loads, rather than requiring user search input.
+     - **Searching & Sorting**: Always make relationship select fields searchable (`->searchable()`) and sort options by the latest created data (using `modifyQueryUsing(fn (Builder $query) => $query->latest())`) so users can easily find and pick recent records.
+     - **Multiple Selection & Pivot Tables**: If a Select field allows multiple choices (`->multiple()`) pointing to relationship options, always create a distinct database table (a pivot lookup table like `event_partner` with cascading foreign keys and composite primary keys) instead of storing selections inside JSON or comma-separated columns.
 
 6. **Reorderable Models & Columns**:
    - **Database Migration**: If a model uses `->reorderable('column_name')`, select the database integer type for the orderable column based on the expected maximum records:
