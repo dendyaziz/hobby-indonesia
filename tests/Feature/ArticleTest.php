@@ -38,6 +38,7 @@ it('can create an article and save to database', function () {
 
     $this->assertDatabaseHas('articles', [
         'title' => 'My New Hobby Article',
+        'slug' => 'my-new-hobby-article',
         'content' => '<p>This is a wonderful article content about a hobby.</p>',
         'status' => 'draft',
     ]);
@@ -92,6 +93,7 @@ it('can edit and update an article', function () {
     $this->assertDatabaseHas('articles', [
         'id' => $article->id,
         'title' => 'Updated Title',
+        'slug' => $article->slug,
         'content' => '<p>Updated content</p>',
         'status' => 'published',
     ]);
@@ -133,4 +135,23 @@ it('has correct content rich editor configuration', function () {
         }
     }
     expect(in_array('attachFiles', $flattenedButtons))->toBeTrue();
+});
+
+it('validates unique constraint for slug', function () {
+    // Create an existing article with a specific slug
+    Article::factory()->create([
+        'slug' => 'duplicate-slug',
+    ]);
+
+    // Attempt to create a new article with the same slug
+    Livewire::test(CreateArticle::class)
+        ->fillForm([
+            'title' => 'Another Article Title',
+            'image' => UploadedFile::fake()->image('article.jpg'),
+            'content' => '<p>Some content</p>',
+            'status' => 'draft',
+        ])
+        ->set('data.slug', 'duplicate-slug') // Manually set duplicate slug
+        ->call('create')
+        ->assertHasFormErrors(['slug']);
 });

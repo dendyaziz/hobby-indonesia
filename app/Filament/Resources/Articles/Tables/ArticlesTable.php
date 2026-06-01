@@ -20,6 +20,11 @@ class ArticlesTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('slug')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 SpatieMediaLibraryImageColumn::make('image')
                     ->collection('featured_images')
                     ->conversion('small')

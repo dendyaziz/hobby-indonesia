@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\Articles\Schemas;
 
+use App\Models\Article;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class ArticleForm
 {
@@ -18,7 +21,16 @@ class ArticleForm
             ->components([
                 TextInput::make('title')
                     ->required()
-                    ->maxLength(150),
+                    ->maxLength(150)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+
+                TextInput::make('slug')
+                    ->disabled()
+                    ->dehydrated()
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(Article::class, 'slug', ignoreRecord: true),
 
                 SpatieMediaLibraryFileUpload::make('image')
                     ->collection('featured_images')
