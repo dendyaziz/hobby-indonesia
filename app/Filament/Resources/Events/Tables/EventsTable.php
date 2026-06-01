@@ -15,13 +15,13 @@ class EventsTable
     {
         return $table
             ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
                 SpatieMediaLibraryImageColumn::make('image')
                     ->collection('events')
                     ->conversion('small')
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('title')
-                    ->searchable()
-                    ->sortable(),
                 TextColumn::make('partners.name')
                     ->badge(),
                 TextColumn::make('created_at')
