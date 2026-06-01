@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Articles\Schemas;
 
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -28,19 +29,11 @@ class ArticleForm
                 RichEditor::make('content')
                     ->required()
                     ->toolbarButtons([
-                        'bold',
-                        'italic',
-                        'underline',
-                        'strike',
-                        'link',
-                        'bulletList',
-                        'orderedList',
-                        'alignStart',
-                        'alignCenter',
-                        'alignEnd',
-                        'alignJustify',
-                        'undo',
-                        'redo',
+                        ['bold', 'italic', 'underline', 'strike', 'link'],
+                        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h2', 'h3'])],
+                        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+                        ['blockquote', 'bulletList', 'orderedList'],
+                        ['undo', 'redo'],
                     ])
                     ->columnSpanFull(),
 
