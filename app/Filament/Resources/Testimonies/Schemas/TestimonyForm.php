@@ -26,7 +26,7 @@ class TestimonyForm
                     ->toolbarButtons([
                         'bold',
                         'italic',
-                        'strike',
+                        'underline',
                         'undo',
                         'redo',
                     ])

@@ -20,7 +20,7 @@ class FaqForm
                     ->toolbarButtons([
                         'bold',
                         'italic',
-                        'strike',
+                        'underline',
                         'link',
                         'bulletList',
                         'orderedList',

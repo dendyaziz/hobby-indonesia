@@ -29,7 +29,7 @@ class ArticleForm
                 RichEditor::make('content')
                     ->required()
                     ->toolbarButtons([
-                        ['bold', 'italic', 'underline', 'strike', 'link'],
+                        ['bold', 'italic', 'underline', 'link'],
                         [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h2', 'h3'])],
                         [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
                         ['blockquote', 'bulletList', 'orderedList'],
