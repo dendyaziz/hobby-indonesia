@@ -96,3 +96,41 @@ it('can edit and update an article', function () {
         'status' => 'published',
     ]);
 });
+
+it('has correct content rich editor configuration', function () {
+    $component = Livewire::test(CreateArticle::class);
+    $schema = $component->instance()->getSchema('form');
+    
+    $contentField = collect($schema->getComponents())
+        ->first(fn ($component) => $component->getName() === 'content');
+
+    /** @var \Filament\Forms\Components\RichEditor $contentField */
+    expect($contentField)->not->toBeNull();
+    expect($contentField)->toBeInstanceOf(\Filament\Forms\Components\RichEditor::class);
+    
+    // Check directory, max size, and visibility
+    expect($contentField->getFileAttachmentsDirectory())->toBe('articles/attachments');
+    expect($contentField->getFileAttachmentsMaxSize())->toBe(2048);
+    expect($contentField->getFileAttachmentsVisibility())->toBe('private');
+    
+    // Check resizable images and tampering prevention
+    expect($contentField->hasResizableImages())->toBeTrue();
+    expect($contentField->shouldPreventFileAttachmentPathTampering())->toBeTrue();
+    
+    // Check toolbar buttons has attachFiles
+    $toolbarButtons = $contentField->getToolbarButtons();
+    $flattenedButtons = [];
+    foreach ($toolbarButtons as $button) {
+        if (is_array($button)) {
+            // Some buttons are nested in groups, some are simple strings, some are ToolbarButtonGroup instances
+            if ($button instanceof \Filament\Forms\Components\RichEditor\ToolbarButtonGroup) {
+                $flattenedButtons = array_merge($flattenedButtons, $button->getButtons());
+            } else {
+                $flattenedButtons = array_merge($flattenedButtons, $button);
+            }
+        } else {
+            $flattenedButtons[] = $button;
+        }
+    }
+    expect(in_array('attachFiles', $flattenedButtons))->toBeTrue();
+});

@@ -29,12 +29,17 @@ class ArticleForm
                 RichEditor::make('content')
                     ->required()
                     ->toolbarButtons([
-                        ['bold', 'italic', 'underline', 'link'],
+                        ['bold', 'italic', 'underline', 'link', 'attachFiles'],
                         [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h2', 'h3'])],
                         [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
                         ['blockquote', 'bulletList', 'orderedList'],
                         ['undo', 'redo'],
                     ])
+                    ->fileAttachmentsDirectory('articles/attachments')
+                    ->fileAttachmentsMaxSize(2048)
+                    ->fileAttachmentsVisibility('private')
+                    ->resizableImages()
+                    ->preventFileAttachmentPathTampering()
                     ->columnSpanFull(),
 
                 Radio::make('status')
