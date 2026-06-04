@@ -87,6 +87,45 @@ Use this skill whenever you are tasked with creating a new model, database migra
              ->fileAttachmentsDirectory('public/articles/attachments')
              ->fileAttachmentsMaxSize(2048)
          ```
+       - **Automatic Attachment Deletion**: Because Filament does not automatically track or clean up files uploaded via the `RichEditor` when a record is deleted, you must clean them up manually to prevent orphaned files in S3 or local storage. Hook into the model's `deleting` event inside its `booted()` method, parse the HTML for image URLs, clean the storage path (accounting for prefixes like `/storage/` or S3 roots like `AWS_ROOT`), and delete the files:
+         ```php
+         use Illuminate\Support\Facades\Storage;
+         use Illuminate\Support\Str;
+
+         protected static function booted(): void
+         {
+             static::deleting(function (TheModel $model) {
+                 if (empty($model->content)) {
+                     return;
+                 }
+
+                 // Extract all image 'src' attributes
+                 preg_match_all('/<img[^>]+src="([^">]+)"/', $model->content, $matches);
+                 
+                 if (! empty($matches[1])) {
+                     $disk = config('filament.default_filesystem_disk', 'public');
+                     $root = config("filesystems.disks.{$disk}.root");
+
+                     foreach ($matches[1] as $url) {
+                         $path = parse_url($url, PHP_URL_PATH);
+                         $path = ltrim($path, '/');
+                         
+                         // Strip local 'storage/' prefix if present
+                         if (Str::startsWith($path, 'storage/')) {
+                             $path = Str::after($path, 'storage/');
+                         }
+                         
+                         // Strip S3 root prefix if present (Laravel Storage auto-prepends root)
+                         if ($root && Str::startsWith($path, $root . '/')) {
+                             $path = Str::after($path, $root . '/');
+                         }
+                         
+                         Storage::disk($disk)->delete($path);
+                     }
+                 }
+             });
+         }
+         ```
    - **Filament Table Layout**:
      - Use the `SpatieMediaLibraryImageColumn` component, specifying the collection and targeting the lightweight `'small'` conversion.
      - **Table Example**:
