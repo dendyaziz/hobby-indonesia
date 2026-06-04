@@ -34,7 +34,8 @@ class TestimonyForm
                 SpatieMediaLibraryFileUpload::make('image')
                     ->collection('testimonies')
                     ->image()
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->imagePreviewHeight(250),
             ]);
     }
 }

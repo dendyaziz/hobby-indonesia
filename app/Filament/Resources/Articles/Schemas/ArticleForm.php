@@ -36,6 +36,7 @@ class ArticleForm
                     ->collection('featured_images')
                     ->image()
                     ->imageEditor()
+                    ->imagePreviewHeight(250)
                     ->required(),
 
                 RichEditor::make('content')

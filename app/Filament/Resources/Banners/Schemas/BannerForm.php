@@ -28,6 +28,7 @@ class BannerForm
                     ->collection('banners')
                     ->image()
                     ->imageEditor()
+                    ->imagePreviewHeight(250)
                     ->required(),
 
                 Radio::make('type')

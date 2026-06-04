@@ -21,6 +21,7 @@ class PartnerForm
                     ->collection('partners')
                     ->image()
                     ->imageEditor()
+                    ->imagePreviewHeight(250)
                     ->required(),
                 Radio::make('status')
                     ->options([

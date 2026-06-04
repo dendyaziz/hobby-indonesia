@@ -23,7 +23,8 @@ class EventForm
                 SpatieMediaLibraryFileUpload::make('image')
                     ->collection('events')
                     ->image()
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->imagePreviewHeight(250),
                 Select::make('partners')
                     ->relationship(
                         name: 'partners',

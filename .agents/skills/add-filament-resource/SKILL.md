@@ -30,6 +30,13 @@ Use this skill whenever you are tasked with creating a new model, database migra
      > Because all models in this application use UUIDs as primary keys, the default `$table->morphs('model')` in the Spatie media migration MUST be changed to `$table->uuidMorphs('model')`. Failing to do so will result in SQL truncation errors when trying to insert string UUIDs into an unsigned big integer column.
      > [!TIP]
      > By default, Spatie Media Library processes conversions in a background queue. To prevent missing/unprocessed conversions in local development (when queue workers aren't active), ensure `QUEUE_CONVERSIONS_BY_DEFAULT=false` is declared in the `.env` file so conversions run synchronously upon upload.
+   - **Public/Private Asset Separation**:
+     - S3 file access is managed strictly via **Bucket Policies** instead of file-level ACLs. To support both public and private assets:
+       1. The S3 Bucket Policy is configured to grant public read access (`s3:GetObject`) **only** to the public directory prefix (e.g. `/local/public/*`).
+       2. All public files are saved inside a `public/` directory:
+          - For Spatie Media Library uploads, the global prefix `'prefix' => 'public'` is set in `config/media-library.php`.
+          - For standard RichEditor file attachments, the directory must start with `public/` (e.g., `fileAttachmentsDirectory('public/articles/attachments')`).
+       3. Future private files (or private models) must be stored outside of the `public/` folder (such as directly under the root or in a `private/` folder). S3 will automatically deny public access to these files, keeping them secure.
    - **Eloquent Model Configuration**:
      - Implement `Spatie\MediaLibrary\HasMedia` and use the `Spatie\MediaLibrary\InteractsWithMedia` trait.
      - Register the media collection and define responsive media conversions using **height only** so that the image engine scales the width proportionally, preserving the original aspect ratio without distortion.
@@ -61,8 +68,8 @@ Use this skill whenever you are tasked with creating a new model, database migra
        }
        ```
    - **Filament Form Layout**:
-     - Use the `SpatieMediaLibraryFileUpload` component and chain `->collection('collection_name')`. Include `->image()` and `->imageEditor()` to allow editing.
-     - **Form Example**:
+     - **Image Preview Height Workaround**: Spatie Media Library components often render blurry previews in Filament because they try to load tiny thumbnails. To resolve this, always append `->imagePreviewHeight(250)` to every `SpatieMediaLibraryFileUpload` component.
+     - **Spatie Form Example**:
        ```php
        use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
@@ -70,8 +77,16 @@ Use this skill whenever you are tasked with creating a new model, database migra
            ->collection('banners')
            ->image()
            ->imageEditor()
+           ->imagePreviewHeight(250)
            ->required()
        ```
+     - **RichEditor File Attachments**:
+       - RichEditor components that allow file uploads (e.g., `->toolbarButtons(['attachFiles', ...])`) must direct uploads to the public folder:
+         ```php
+         RichEditor::make('content')
+             ->fileAttachmentsDirectory('public/articles/attachments')
+             ->fileAttachmentsMaxSize(2048)
+         ```
    - **Filament Table Layout**:
      - Use the `SpatieMediaLibraryImageColumn` component, specifying the collection and targeting the lightweight `'small'` conversion.
      - **Table Example**:
