@@ -111,9 +111,9 @@ it('has correct content rich editor configuration', function () {
     expect($contentField)->toBeInstanceOf(\Filament\Forms\Components\RichEditor::class);
     
     // Check directory, max size, and visibility
-    expect($contentField->getFileAttachmentsDirectory())->toBe('articles/attachments');
+    expect($contentField->getFileAttachmentsDirectory())->toBe('public/articles/attachments');
     expect($contentField->getFileAttachmentsMaxSize())->toBe(2048);
-    expect($contentField->getFileAttachmentsVisibility())->toBe('private');
+    expect($contentField->getFileAttachmentsVisibility())->toBe('public');
     
     // Check resizable images and tampering prevention
     expect($contentField->hasResizableImages())->toBeTrue();
