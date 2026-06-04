@@ -47,9 +47,8 @@ class ArticleForm
                         ['blockquote', 'bulletList', 'orderedList'],
                         ['undo', 'redo'],
                     ])
-                    ->fileAttachmentsDirectory('articles/attachments')
+                    ->fileAttachmentsDirectory('public/articles/attachments')
                     ->fileAttachmentsMaxSize(2048)
-                    ->fileAttachmentsVisibility('private')
                     ->resizableImages()
                     ->preventFileAttachmentPathTampering()
                     ->columnSpanFull(),
