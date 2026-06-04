@@ -37,18 +37,20 @@ class BannersTable
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(fn (string $state, \App\Models\Banner $record): string =>
-                        $state === 'active' && $record->start_date && $record->start_date->isFuture()
-                            ? 'Scheduled'
-                            : Str::headline($state)
+                        match (true) {
+                            $state === 'active' && $record->end_date && $record->end_date->isPast() => 'Expired',
+                            $state === 'active' && $record->start_date && $record->start_date->isFuture() => 'Scheduled',
+                            default => Str::headline($state),
+                        }
                     )
                     ->color(fn (string $state, \App\Models\Banner $record): string =>
-                        $state === 'active' && $record->start_date && $record->start_date->isFuture()
-                            ? 'warning'
-                            : match (strtolower($state)) {
-                                'active' => 'success',
-                                'inactive' => 'danger',
-                                default => 'gray',
-                            }
+                        match (true) {
+                            $state === 'active' && $record->end_date && $record->end_date->isPast() => 'danger',
+                            $state === 'active' && $record->start_date && $record->start_date->isFuture() => 'warning',
+                            $state === 'active' => 'success',
+                            $state === 'inactive' => 'danger',
+                            default => 'gray',
+                        }
                     ),
 
                 TextColumn::make('start_date')

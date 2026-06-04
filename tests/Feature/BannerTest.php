@@ -227,6 +227,20 @@ it('shows status as Scheduled if active and start_date is in the future', functi
         ->assertTableColumnFormattedStateSet('status', 'Active', record: $activeBanner);
 });
 
+it('shows status as Expired if active and end_date is in the past', function () {
+    $expiredBanner = Banner::factory()->create([
+        'title' => 'Expired Banner',
+        'placement' => 'homepage--hero',
+        'status' => 'active',
+        'start_date' => now()->subDays(5)->startOfDay(),
+        'end_date' => now()->subDays(1)->startOfDay(),
+    ]);
+
+    Livewire::test(ListHeroBanners::class)
+        ->assertCanRenderTableColumn('status')
+        ->assertTableColumnFormattedStateSet('status', 'Expired', record: $expiredBanner);
+});
+
 it('includes the navigation group in breadcrumbs', function () {
     $breadcrumbs = Livewire::test(ListHeroBanners::class)
         ->instance()
