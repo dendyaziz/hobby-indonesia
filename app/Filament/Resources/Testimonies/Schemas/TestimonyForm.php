@@ -24,9 +24,6 @@ class TestimonyForm
                 RichEditor::make('testimony')
                     ->required()
                     ->toolbarButtons([
-                        'bold',
-                        'italic',
-                        'underline',
                         'undo',
                         'redo',
                     ])
