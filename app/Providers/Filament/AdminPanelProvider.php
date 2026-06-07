@@ -50,6 +50,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Reseller')
                     ->icon(\Filament\Support\Icons\Heroicon::OutlinedUsers)
                     ->collapsed(),
+                \Filament\Navigation\NavigationGroup::make()
+                    ->label('Administrator')
+                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedShieldCheck)
+                    ->collapsed(),
             ])
             ->middleware([
                 EncryptCookies::class,
