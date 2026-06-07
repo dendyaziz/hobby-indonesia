@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Radio;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\Category;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Components\Utilities\Get;
@@ -34,6 +37,18 @@ class ProductForm
                     ->imageEditor()
                     ->imagePreviewHeight(250)
                     ->required(),
+                Select::make('categories')
+                    ->relationship(
+                        name: 'categories',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->with('parent')->sub()->latest(),
+                    )
+                    ->getOptionLabelFromRecordUsing(fn (Category $record) => "{$record->parent?->name} → {$record->name}")
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->label('Category'),
                 TextInput::make('price')
                     ->required()
                     ->numeric()

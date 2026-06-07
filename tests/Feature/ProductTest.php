@@ -5,6 +5,7 @@ use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Category;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -18,6 +19,12 @@ beforeEach(function () {
     $user = User::factory()->create();
     $this->actingAs($user);
     Storage::fake('s3');
+
+    $this->parentCategory = Category::factory()->create(['name' => 'Board Games']);
+    $this->subCategory = Category::factory()->create([
+        'name' => 'Strategy',
+        'parent_category_id' => $this->parentCategory->id,
+    ]);
 });
 
 it('can load the product index and create pages', function () {
@@ -48,6 +55,7 @@ it('can create a product and save to database', function () {
                 UploadedFile::fake()->image('product1.jpg'),
                 UploadedFile::fake()->image('product2.jpg'),
             ],
+            'categories' => [$this->subCategory->id],
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -73,6 +81,8 @@ it('can create a product and save to database', function () {
 
     $product = Product::first();
     expect($product->getMedia('product-images'))->toHaveCount(2);
+    expect($product->categories)->toHaveCount(1);
+    expect($product->categories->first()->id)->toBe($this->subCategory->id);
 });
 
 it('validates required fields', function () {
@@ -83,6 +93,7 @@ it('validates required fields', function () {
             'price' => null,
             'description' => '',
             'images' => [],
+            'categories' => [],
         ])
         ->call('create')
         ->assertHasFormErrors([
@@ -91,6 +102,7 @@ it('validates required fields', function () {
             'price' => 'required',
             'description',
             'images' => 'required',
+            'categories' => 'required',
         ]);
 });
 
@@ -169,6 +181,7 @@ it('validates youtube validation rules', function () {
             'images' => [
                 UploadedFile::fake()->image('product_test.jpg'),
             ],
+            'categories' => [$this->subCategory->id],
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -200,4 +213,51 @@ it('synchronizes price, discount percentage, and discounted price in real-time',
             'discount_percentage' => null,
             'discounted_price' => null,
         ]);
+});
+
+it('can edit and update a product and its categories', function () {
+    $newSubCategory = Category::factory()->create([
+        'name' => 'Card Games',
+        'parent_category_id' => $this->parentCategory->id,
+    ]);
+
+    $product = Product::create([
+        'name' => 'Original Name',
+        'availability' => 'Available',
+        'price' => 100000,
+        'description' => '<p>Original description</p>',
+    ]);
+    $product->categories()->attach($this->subCategory);
+
+    Livewire::test(EditProduct::class, [
+        'record' => $product->getKey(),
+    ])
+        ->assertFormSet([
+            'name' => 'Original Name',
+            'availability' => 'Available',
+            'price' => 100000,
+            'description' => '<p>Original description</p>',
+        ])
+        ->fillForm([
+            'name' => 'Updated Name',
+            'availability' => 'Available',
+            'price' => 120000,
+            'description' => '<p>Updated description</p>',
+            'images' => [
+                UploadedFile::fake()->image('updated1.jpg'),
+            ],
+            'categories' => [$newSubCategory->id],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $this->assertDatabaseHas('products', [
+        'id' => $product->id,
+        'name' => 'Updated Name',
+        'price' => 120000,
+    ]);
+
+    $product->refresh();
+    expect($product->categories)->toHaveCount(1);
+    expect($product->categories->first()->id)->toBe($newSubCategory->id);
 });
