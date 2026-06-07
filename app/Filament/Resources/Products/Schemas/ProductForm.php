@@ -48,6 +48,7 @@ class ProductForm
                         }
                     }),
                 TextInput::make('discount_percentage')
+                    ->label('Discount')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(100)
@@ -77,6 +78,7 @@ class ProductForm
                 TextInput::make('brand')
                     ->maxLength(50),
                 TextInput::make('manufacture_country')
+                    ->label('Country of manufacture')
                     ->maxLength(50),
                 TextInput::make('publisher')
                     ->maxLength(50),
@@ -85,18 +87,22 @@ class ProductForm
                 TextInput::make('artist')
                     ->maxLength(50),
                 TextInput::make('min_age')
+                    ->label('Minimum age')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(50),
                 TextInput::make('min_player')
+                    ->label('Minimum player')
                     ->numeric()
                     ->minValue(1),
                 TextInput::make('max_player')
+                    ->label('Maximum player')
                     ->numeric()
                     ->minValue(1),
                 TextInput::make('playing_duration')
                     ->numeric()
-                    ->minValue(1),
+                    ->minValue(1)
+                    ->suffix('minutes'),
                 TextInput::make('youtube')
                     ->maxLength(100)
                     ->helperText('Input channel ID or URL')
