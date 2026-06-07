@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
+    use HasUuids;
+    use InteractsWithMedia;
+
     protected $fillable = [
         'name',
         'availability',
@@ -24,4 +31,21 @@ class Product extends Model
         'youtube',
         'description',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('product-images')
+            ->registerMediaConversions(function (Media $media): void {
+                $this
+                    ->addMediaConversion('small')
+                    ->height(40)
+                    ->format('webp');
+
+                $this
+                    ->addMediaConversion('thumbnail')
+                    ->height(400)
+                    ->format('webp');
+            });
+    }
 }

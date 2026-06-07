@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -15,6 +17,7 @@ beforeEach(function () {
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
     $this->actingAs($user);
+    Storage::fake('s3');
 });
 
 it('can load the product index and create pages', function () {
@@ -41,6 +44,10 @@ it('can create a product and save to database', function () {
             'playing_duration' => 60,
             'youtube' => '@hobby_indo_channel',
             'description' => '<p>This is a super fun game for the whole family.</p>',
+            'images' => [
+                UploadedFile::fake()->image('product1.jpg'),
+                UploadedFile::fake()->image('product2.jpg'),
+            ],
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -63,6 +70,9 @@ it('can create a product and save to database', function () {
         'youtube' => '@hobby_indo_channel',
         'description' => '<p>This is a super fun game for the whole family.</p>',
     ]);
+
+    $product = Product::first();
+    expect($product->getMedia('product-images'))->toHaveCount(2);
 });
 
 it('validates required fields', function () {
@@ -72,6 +82,7 @@ it('validates required fields', function () {
             'availability' => '',
             'price' => null,
             'description' => '',
+            'images' => [],
         ])
         ->call('create')
         ->assertHasFormErrors([
@@ -79,6 +90,7 @@ it('validates required fields', function () {
             'availability' => 'required',
             'price' => 'required',
             'description',
+            'images' => 'required',
         ]);
 });
 
@@ -154,6 +166,9 @@ it('validates youtube validation rules', function () {
             'price' => 100000,
             'description' => 'Cool game',
             'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'images' => [
+                UploadedFile::fake()->image('product_test.jpg'),
+            ],
         ])
         ->call('create')
         ->assertHasNoFormErrors();

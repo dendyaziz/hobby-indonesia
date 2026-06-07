@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
@@ -25,6 +26,13 @@ class ProductForm
                         'Out of stock' => 'Out of stock',
                         'Pre-order' => 'Pre-order',
                     ])
+                    ->required(),
+                SpatieMediaLibraryFileUpload::make('images')
+                    ->collection('product-images')
+                    ->multiple()
+                    ->image()
+                    ->imageEditor()
+                    ->imagePreviewHeight(250)
                     ->required(),
                 TextInput::make('price')
                     ->required()
