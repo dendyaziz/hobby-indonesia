@@ -48,7 +48,7 @@ class ProductForm
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->label('Category'),
+                    ->label('Categories'),
                 TextInput::make('price')
                     ->required()
                     ->numeric()
