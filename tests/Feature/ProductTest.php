@@ -158,3 +158,31 @@ it('validates youtube validation rules', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 });
+
+it('synchronizes price, discount percentage, and discounted price in real-time', function () {
+    // 1. Setting price and discount percentage calculates discounted price
+    Livewire::test(CreateProduct::class)
+        ->set('data.price', 100000)
+        ->set('data.discount_percentage', 15)
+        ->assertFormSet([
+            'discounted_price' => 85000,
+        ]);
+
+    // 2. Setting price and discounted price calculates discount percentage
+    Livewire::test(CreateProduct::class)
+        ->set('data.price', 100000)
+        ->set('data.discounted_price', 75000)
+        ->assertFormSet([
+            'discount_percentage' => 25,
+        ]);
+
+    // 3. Setting price, then clearing it, clears discount and discounted price
+    Livewire::test(CreateProduct::class)
+        ->set('data.price', 100000)
+        ->set('data.discount_percentage', 15)
+        ->set('data.price', null)
+        ->assertFormSet([
+            'discount_percentage' => null,
+            'discounted_price' => null,
+        ]);
+});

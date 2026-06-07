@@ -6,6 +6,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class ProductForm
@@ -27,16 +29,51 @@ class ProductForm
                 TextInput::make('price')
                     ->required()
                     ->numeric()
-                    ->prefix('Rp'),
+                    ->prefix('Rp')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                        if (blank($state)) {
+                            $set('discount_percentage', null);
+                            $set('discounted_price', null);
+                            return;
+                        }
+
+                        $discountPercentage = $get('discount_percentage');
+                        $discountedPrice = $get('discounted_price');
+
+                        if (filled($discountPercentage)) {
+                            $set('discounted_price', (int) round($state * (1 - $discountPercentage / 100)));
+                        } elseif (filled($discountedPrice)) {
+                            $set('discount_percentage', round((($state - $discountedPrice) / $state) * 100, 2));
+                        }
+                    }),
                 TextInput::make('discount_percentage')
                     ->numeric()
                     ->minValue(0)
                     ->maxValue(100)
                     ->step(0.01)
-                    ->suffix('%'),
+                    ->suffix('%')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                        $price = $get('price');
+                        if (blank($price) || blank($state)) {
+                            $set('discounted_price', null);
+                            return;
+                        }
+                        $set('discounted_price', (int) round($price * (1 - $state / 100)));
+                    }),
                 TextInput::make('discounted_price')
                     ->numeric()
-                    ->prefix('Rp'),
+                    ->prefix('Rp')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                        $price = $get('price');
+                        if (blank($price) || blank($state)) {
+                            $set('discount_percentage', null);
+                            return;
+                        }
+                        $set('discount_percentage', round((($price - $state) / $price) * 100, 2));
+                    }),
                 TextInput::make('brand')
                     ->maxLength(50),
                 TextInput::make('manufacture_country')
