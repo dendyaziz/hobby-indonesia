@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -49,6 +50,8 @@ class ProductForm
                     ->preload()
                     ->required()
                     ->label('Categories'),
+                SpatieTagsInput::make('tags')
+                    ->placeholder('Add tags...'),
                 TextInput::make('price')
                     ->required()
                     ->numeric()

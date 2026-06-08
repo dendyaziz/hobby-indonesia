@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Tags\HasTags;
 
 class Product extends Model implements HasMedia
 {
     use HasUuids;
     use InteractsWithMedia;
+    use HasTags;
 
     protected $fillable = [
         'name',

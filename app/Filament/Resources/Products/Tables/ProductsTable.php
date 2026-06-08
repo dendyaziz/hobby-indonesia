@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
 
 class ProductsTable
 {
@@ -41,6 +42,8 @@ class ProductsTable
                 TextColumn::make('categories.name')
                     ->label('Categories')
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                SpatieTagsColumn::make('tags')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('brand')
                     ->searchable()

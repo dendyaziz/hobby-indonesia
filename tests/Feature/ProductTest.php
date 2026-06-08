@@ -56,6 +56,7 @@ it('can create a product and save to database', function () {
                 UploadedFile::fake()->image('product2.jpg'),
             ],
             'categories' => [$this->subCategory->id],
+            'tags' => ['Strategy', 'Board Game'],
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -83,6 +84,7 @@ it('can create a product and save to database', function () {
     expect($product->getMedia('product-images'))->toHaveCount(2);
     expect($product->categories)->toHaveCount(1);
     expect($product->categories->first()->id)->toBe($this->subCategory->id);
+    expect($product->tags->pluck('name')->toArray())->toContain('Strategy', 'Board Game');
 });
 
 it('validates required fields', function () {
@@ -228,6 +230,7 @@ it('can edit and update a product and its categories', function () {
         'description' => '<p>Original description</p>',
     ]);
     $product->categories()->attach($this->subCategory);
+    $product->attachTags(['OldTag1', 'OldTag2']);
 
     Livewire::test(EditProduct::class, [
         'record' => $product->getKey(),
@@ -237,6 +240,7 @@ it('can edit and update a product and its categories', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => '<p>Original description</p>',
+            'tags' => ['OldTag1', 'OldTag2'],
         ])
         ->fillForm([
             'name' => 'Updated Name',
@@ -247,6 +251,7 @@ it('can edit and update a product and its categories', function () {
                 UploadedFile::fake()->image('updated1.jpg'),
             ],
             'categories' => [$newSubCategory->id],
+            'tags' => ['UpdatedTag'],
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -260,4 +265,5 @@ it('can edit and update a product and its categories', function () {
     $product->refresh();
     expect($product->categories)->toHaveCount(1);
     expect($product->categories->first()->id)->toBe($newSubCategory->id);
+    expect($product->tags->pluck('name')->toArray())->toBe(['UpdatedTag']);
 });
