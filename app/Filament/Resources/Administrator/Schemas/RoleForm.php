@@ -32,6 +32,11 @@ class RoleForm
                         ->options(function () use ($permissionNames) {
                             return Permission::whereIn('name', $permissionNames)
                                 ->get()
+                                ->sortBy(function ($permission) {
+                                    $isView = str_starts_with($permission->name, 'view') ? 1 : 0;
+                                    $modelName = explode(' ', $permission->name)[1] ?? '';
+                                    return $isView . '_' . $modelName;
+                                })
                                 ->mapWithKeys(function ($permission) {
                                     $label = Str::headline(str_replace(' ', '_', $permission->name));
                                     $label = str_replace('Faq', 'QnA', $label);
