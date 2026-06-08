@@ -20,7 +20,7 @@ class ThirdBannerResource extends Resource
 {
     protected static ?string $model = Banner::class;
 
-    protected static string|BackedEnum|null $navigationIcon = null;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
 
     protected static string|UnitEnum|null $navigationGroup = 'Homepage';
 

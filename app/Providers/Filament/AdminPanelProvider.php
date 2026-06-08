@@ -44,15 +44,12 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make()
                     ->label('Homepage')
-                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedHome)
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()
                     ->label('Reseller')
-                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedUsers)
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()
                     ->label('Administrator')
-                    ->icon(\Filament\Support\Icons\Heroicon::OutlinedShieldCheck)
                     ->collapsed(),
             ])
             ->middleware([
