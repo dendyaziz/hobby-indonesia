@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use BackedEnum;
+use UnitEnum;
 
 /**
  * @property-read Schema $form
@@ -26,7 +27,9 @@ class ManageSocialMedia extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAtSymbol;
 
-    protected static ?int $navigationSort = 10;
+    protected static string|UnitEnum|null $navigationGroup = 'Public';
+
+    protected static ?int $navigationSort = 5;
 
     /**
      * @var array<string, mixed> | null

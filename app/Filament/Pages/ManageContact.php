@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use BackedEnum;
+use UnitEnum;
 
 /**
  * @property-read Schema $form
@@ -27,7 +28,9 @@ class ManageContact extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhone;
 
-    protected static ?int $navigationSort = 20;
+    protected static string|UnitEnum|null $navigationGroup = 'Public';
+
+    protected static ?int $navigationSort = 6;
 
     /**
      * @var array<string, mixed> | null

@@ -43,6 +43,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make()
+                    ->label('Public')
+                    ->collapsed(),
+                \Filament\Navigation\NavigationGroup::make()
                     ->label('Listing')
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()

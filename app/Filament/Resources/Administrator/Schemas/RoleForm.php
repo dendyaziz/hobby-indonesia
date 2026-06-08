@@ -25,7 +25,7 @@ class RoleForm
 
         foreach ($groups as $groupName => $models) {
             $permissionNames = collect($models)->flatMap(fn($m) => ["view {$m}", "manage {$m}"])->toArray();
-            
+
             $permissionSections[] = Section::make($groupName)
                 ->schema([
                     CheckboxList::make("permissions_{$groupName}")
@@ -57,6 +57,7 @@ class RoleForm
         }
 
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Role Details')
                     ->schema([
