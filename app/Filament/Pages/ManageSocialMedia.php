@@ -31,6 +31,11 @@ class ManageSocialMedia extends Page
 
     protected static ?int $navigationSort = 5;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('view SocialMedia') || auth()->user()->can('manage SocialMedia');
+    }
+
     /**
      * @var array<string, mixed> | null
      */
@@ -44,6 +49,7 @@ class ManageSocialMedia extends Page
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->disabled(! auth()->user()->can('manage SocialMedia'))
             ->components([
                 Form::make([
                     TextInput::make('facebook')
@@ -149,6 +155,8 @@ class ManageSocialMedia extends Page
 
     public function save(): void
     {
+        abort_unless(auth()->user()->can('manage SocialMedia'), 403, 'You do not have permission to modify Social Media.');
+
         $data = $this->form->getState();
 
         $record = $this->getRecord();

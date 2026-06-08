@@ -4,7 +4,7 @@ namespace App\Filament\Resources\ProductBanners;
 
 use App\Filament\Resources\Banners\Schemas\BannerForm;
 use App\Filament\Resources\Banners\Tables\BannersTable;
-use App\Models\Banner;
+use App\Models\ProductBanner;
 use App\Filament\Resources\ProductBanners\Pages\CreateProductBanner;
 use App\Filament\Resources\ProductBanners\Pages\EditProductBanner;
 use App\Filament\Resources\ProductBanners\Pages\ListProductBanners;
@@ -18,7 +18,7 @@ use UnitEnum;
 
 class ProductBannerResource extends Resource
 {
-    protected static ?string $model = Banner::class;
+    protected static ?string $model = ProductBanner::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

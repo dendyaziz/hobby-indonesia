@@ -7,7 +7,7 @@ use App\Filament\Resources\Banners\Tables\BannersTable;
 use App\Filament\Resources\HeroBanners\Pages\CreateHeroBanner;
 use App\Filament\Resources\HeroBanners\Pages\EditHeroBanner;
 use App\Filament\Resources\HeroBanners\Pages\ListHeroBanners;
-use App\Models\Banner;
+use App\Models\HeroBanner;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,7 +18,7 @@ use UnitEnum;
 
 class HeroBannerResource extends Resource
 {
-    protected static ?string $model = Banner::class;
+    protected static ?string $model = HeroBanner::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 

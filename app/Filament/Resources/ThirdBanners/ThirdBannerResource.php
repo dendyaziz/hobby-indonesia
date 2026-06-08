@@ -4,7 +4,7 @@ namespace App\Filament\Resources\ThirdBanners;
 
 use App\Filament\Resources\Banners\Schemas\BannerForm;
 use App\Filament\Resources\Banners\Tables\BannersTable;
-use App\Models\Banner;
+use App\Models\ThirdBanner;
 use App\Filament\Resources\ThirdBanners\Pages\CreateThirdBanner;
 use App\Filament\Resources\ThirdBanners\Pages\EditThirdBanner;
 use App\Filament\Resources\ThirdBanners\Pages\ListThirdBanners;
@@ -18,7 +18,7 @@ use UnitEnum;
 
 class ThirdBannerResource extends Resource
 {
-    protected static ?string $model = Banner::class;
+    protected static ?string $model = ThirdBanner::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleGroup;
 

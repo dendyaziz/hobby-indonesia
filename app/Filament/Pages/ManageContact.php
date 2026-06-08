@@ -32,6 +32,11 @@ class ManageContact extends Page
 
     protected static ?int $navigationSort = 6;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('view Contact') || auth()->user()->can('manage Contact');
+    }
+
     /**
      * @var array<string, mixed> | null
      */
@@ -45,6 +50,7 @@ class ManageContact extends Page
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->disabled(! auth()->user()->can('manage Contact'))
             ->components([
                 Form::make([
                     TextInput::make('company_name')
@@ -80,6 +86,8 @@ class ManageContact extends Page
 
     public function save(): void
     {
+        abort_unless(auth()->user()->can('manage Contact'), 403, 'You do not have permission to modify Contact.');
+
         $data = $this->form->getState();
 
         $record = $this->getRecord();
