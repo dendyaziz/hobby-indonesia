@@ -43,10 +43,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make()
-                    ->label('Homepage')
+                    ->label('Listing')
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()
-                    ->label('Listing')
+                    ->label('Homepage')
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()
                     ->label('Reseller')
