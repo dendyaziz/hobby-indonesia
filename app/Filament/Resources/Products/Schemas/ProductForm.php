@@ -157,26 +157,20 @@ class ProductForm
                         Section::make('Video Attachment')
                             ->schema([
                                 TextInput::make('youtube')
+                                    ->label('YouTube Video URL')
                                     ->maxLength(100)
-                                    ->helperText('Input channel ID or URL')
+                                    ->helperText('Input a valid YouTube video URL (e.g., https://www.youtube.com/watch?v=...)')
                                     ->rules([
                                         fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                             $value = trim($value);
                                             if (empty($value)) return;
-                                            if (filter_var($value, FILTER_VALIDATE_URL) || str_contains($value, 'youtube.com') || str_contains($value, 'youtu.be')) {
-                                                if (!preg_match('/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/[a-zA-Z0-9.@%\/\-\?=&_]+$/i', $value)) {
-                                                    $fail('The YouTube URL is not valid.');
-                                                }
-                                            } else {
-                                                if (str_starts_with($value, '@')) {
-                                                    if (!preg_match('/^@[a-zA-Z0-9._\-]{3,30}$/', $value)) {
-                                                        $fail('The YouTube handle must start with @ and be 3 to 30 characters long.');
-                                                    }
-                                                } else {
-                                                    if (!preg_match('/^[a-zA-Z0-9._\-]{3,50}$/', $value)) {
-                                                        $fail('The YouTube channel ID or username is not valid.');
-                                                    }
-                                                }
+
+                                            // Matches standard watch URLs (with v parameter anywhere in query string),
+                                            // embed/v/shorts paths, and short youtu.be links.
+                                            $pattern = '/^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?(.*&)?v=|embed\/|v\/|shorts\/)|youtu\.be\/)[a-zA-Z0-9_\-]{11}([?&].*)?$/i';
+
+                                            if (!preg_match($pattern, $value)) {
+                                                $fail('The YouTube video URL is not valid.');
                                             }
                                         }
                                     ]),

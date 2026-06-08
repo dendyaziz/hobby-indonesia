@@ -49,7 +49,7 @@ it('can create a product and save to database', function () {
             'min_player' => 2,
             'max_player' => 4,
             'playing_duration' => 60,
-            'youtube' => '@hobby_indo_channel',
+            'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'description' => '<p>This is a super fun game for the whole family.</p>',
             'images' => [
                 UploadedFile::fake()->image('product1.jpg'),
@@ -77,7 +77,7 @@ it('can create a product and save to database', function () {
         'min_player' => 2,
         'max_player' => 4,
         'playing_duration' => 60,
-        'youtube' => '@hobby_indo_channel',
+        'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         'description' => '<p>This is a super fun game for the whole family.</p>',
     ]);
 
@@ -157,7 +157,7 @@ it('validates min_age, min_player, max_player, playing_duration', function () {
 });
 
 it('validates youtube validation rules', function () {
-    // Invalid Youtube URLs
+    // Invalid Youtube URLs (e.g. facebook URL)
     Livewire::test(CreateProduct::class)
         ->fillForm([
             'youtube' => 'https://facebook.com/mychan',
@@ -165,15 +165,23 @@ it('validates youtube validation rules', function () {
         ->call('create')
         ->assertHasFormErrors(['youtube']);
 
-    // Invalid Youtube Handle (too short/invalid char)
+    // Invalid Youtube Handle (must reject channel handles)
     Livewire::test(CreateProduct::class)
         ->fillForm([
-            'youtube' => '@a',
+            'youtube' => '@hobby_indo_channel',
         ])
         ->call('create')
         ->assertHasFormErrors(['youtube']);
 
-    // Valid inputs
+    // Invalid Youtube Channel URL
+    Livewire::test(CreateProduct::class)
+        ->fillForm([
+            'youtube' => 'https://www.youtube.com/channel/UCabcdefghijklmnopqr',
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['youtube']);
+
+    // Valid inputs: standard watch URL
     Livewire::test(CreateProduct::class)
         ->fillForm([
             'name' => 'Board Game',
@@ -183,6 +191,38 @@ it('validates youtube validation rules', function () {
             'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'images' => [
                 UploadedFile::fake()->image('product_test.jpg'),
+            ],
+            'categories' => [$this->subCategory->id],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    // Valid inputs: short youtu.be URL with parameters
+    Livewire::test(CreateProduct::class)
+        ->fillForm([
+            'name' => 'Board Game 2',
+            'availability' => 'Available',
+            'price' => 100000,
+            'description' => 'Cool game 2',
+            'youtube' => 'https://youtu.be/dQw4w9WgXcQ?t=10',
+            'images' => [
+                UploadedFile::fake()->image('product_test2.jpg'),
+            ],
+            'categories' => [$this->subCategory->id],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    // Valid inputs: embed URL
+    Livewire::test(CreateProduct::class)
+        ->fillForm([
+            'name' => 'Board Game 3',
+            'availability' => 'Available',
+            'price' => 100000,
+            'description' => 'Cool game 3',
+            'youtube' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+            'images' => [
+                UploadedFile::fake()->image('product_test3.jpg'),
             ],
             'categories' => [$this->subCategory->id],
         ])
