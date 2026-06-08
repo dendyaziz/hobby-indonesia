@@ -63,6 +63,7 @@ it('can create a product and save to database', function () {
 
     $this->assertDatabaseHas('products', [
         'name' => 'Amazing Board Game',
+        'slug' => 'amazing-board-game',
         'availability' => 'Available',
         'price' => 250000,
         'discount_percentage' => 10.50,
@@ -225,6 +226,7 @@ it('can edit and update a product and its categories', function () {
 
     $product = Product::create([
         'name' => 'Original Name',
+        'slug' => 'original-name',
         'availability' => 'Available',
         'price' => 100000,
         'description' => '<p>Original description</p>',
@@ -266,4 +268,29 @@ it('can edit and update a product and its categories', function () {
     expect($product->categories)->toHaveCount(1);
     expect($product->categories->first()->id)->toBe($newSubCategory->id);
     expect($product->tags->pluck('name')->toArray())->toBe(['UpdatedTag']);
+});
+
+it('validates unique constraint for slug', function () {
+    Product::create([
+        'name' => 'Original Game',
+        'slug' => 'duplicate-slug',
+        'availability' => 'Available',
+        'price' => 100000,
+        'description' => 'Description',
+    ]);
+
+    Livewire::test(CreateProduct::class)
+        ->fillForm([
+            'name' => 'Another Game Name',
+            'availability' => 'Available',
+            'price' => 100000,
+            'description' => 'Description',
+            'images' => [
+                UploadedFile::fake()->image('product.jpg'),
+            ],
+            'categories' => [$this->subCategory->id],
+        ])
+        ->set('data.slug', 'duplicate-slug')
+        ->call('create')
+        ->assertHasFormErrors(['slug']);
 });

@@ -14,6 +14,8 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use App\Models\Product;
+use Illuminate\Support\Str;
 
 class ProductForm
 {
@@ -23,7 +25,15 @@ class ProductForm
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->maxLength(100),
+                    ->maxLength(100)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                TextInput::make('slug')
+                    ->disabled()
+                    ->dehydrated()
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(Product::class, 'slug', ignoreRecord: true),
                 Radio::make('availability')
                     ->options([
                         'Available' => 'Available',

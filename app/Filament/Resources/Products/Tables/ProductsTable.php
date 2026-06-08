@@ -20,6 +20,10 @@ class ProductsTable
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('slug')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 SpatieMediaLibraryImageColumn::make('images')
                     ->collection('product-images')
                     ->conversion('small')
