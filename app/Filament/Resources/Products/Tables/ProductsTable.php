@@ -29,7 +29,7 @@ class ProductsTable
                     ->conversion('small')
                     ->circular()
                     ->stacked(),
-                TextColumn::make('price')
+                TextColumn::make('current_price')
                     ->label('Current price')
                     ->money('IDR')
                     ->state(fn (Product $record) => $record->discounted_price ?? $record->price)
@@ -89,6 +89,11 @@ class ProductsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('youtube')
                     ->label('YouTube')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('price')
+                    ->label('Price')
+                    ->money('IDR')
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('discount_percentage')
                     ->label('Discount')
