@@ -24,5 +24,9 @@ class DatabaseSeeder extends Seeder
             'telephone' => '+6282122538796',
             'email' => 'hobbyindonesia@gmail.com',
         ]);
+
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+        ]);
     }
 }

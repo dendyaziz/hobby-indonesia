@@ -29,6 +29,11 @@ class UsersTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->badge()
+                    ->searchable(),
+
                 TextColumn::make('status')
                     ->badge()
                     ->getStateUsing(function ($record): string {
