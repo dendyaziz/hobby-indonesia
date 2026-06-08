@@ -20,15 +20,15 @@ class ResellerBannerResource extends Resource
 {
     protected static ?string $model = Banner::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
 
     protected static string|UnitEnum|null $navigationGroup = 'Reseller';
 
-    protected static ?string $navigationLabel = 'Banner';
+    protected static ?string $navigationLabel = 'Reseller Banner';
 
-    protected static ?string $modelLabel = 'Banner';
+    protected static ?string $modelLabel = 'Reseller Banner';
 
-    protected static ?string $pluralModelLabel = 'Banners';
+    protected static ?string $pluralModelLabel = 'Reseller Banners';
 
     protected static ?string $slug = 'reseller/banners';
 
