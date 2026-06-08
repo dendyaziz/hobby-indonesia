@@ -46,6 +46,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Homepage')
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()
+                    ->label('Listing')
+                    ->collapsed(),
+                \Filament\Navigation\NavigationGroup::make()
                     ->label('Reseller')
                     ->collapsed(),
                 \Filament\Navigation\NavigationGroup::make()
