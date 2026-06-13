@@ -6,6 +6,7 @@ use App\Models\User;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Password;
 
 class UserForm
 {
@@ -24,12 +25,16 @@ class UserForm
                     ->unique(User::class, 'email', ignoreRecord: true),
                 TextInput::make('password')
                     ->password()
+                    ->revealable()
                     ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->rule(Password::default())
+                    ->hiddenOn('create')
+                    ->visible(fn (?User $record): bool => $record?->id === auth()->id())
                     ->maxLength(255),
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->multiple()
+                    ->required()
                     ->preload()
                     ->searchable(),
             ]);

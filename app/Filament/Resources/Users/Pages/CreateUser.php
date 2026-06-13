@@ -11,4 +11,9 @@ class CreateUser extends CreateRecord
     use HasGroupBreadcrumbs;
 
     protected static string $resource = UserResource::class;
+
+    protected function afterCreate(): void
+    {
+        $this->record->notify(new \App\Notifications\AdminPasswordSetupNotification());
+    }
 }

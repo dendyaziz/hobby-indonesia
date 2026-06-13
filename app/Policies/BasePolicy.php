@@ -50,4 +50,9 @@ abstract class BasePolicy
     {
         return $user->hasPermissionTo("manage {$this->resourceName}");
     }
+
+    public function reorder(User $user): bool
+    {
+        return $user->hasPermissionTo("manage {$this->resourceName}");
+    }
 }
