@@ -8,13 +8,17 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Select;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->actingAs(User::factory()->create());
+    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+    $user = User::factory()->create();
+    $user->assignRole('Super Admin');
+    $this->actingAs($user);
 });
 
 it('can render the user list page', function () {
@@ -76,7 +80,7 @@ it('can create a user', function () {
     ]);
 
     $user = User::where('email', 'john@example.com')->first();
-    $this->assertNotNull($user->password);
+    $this->assertNull($user->password);
 });
 
 it('can edit a user', function () {
