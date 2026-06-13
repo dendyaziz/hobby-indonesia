@@ -47,7 +47,11 @@ class RoleForm
                         ->hiddenLabel()
                         ->loadStateFromRelationshipsUsing(function ($component, $record) use ($permissionNames) {
                             if ($record) {
-                                $component->state($record->permissions->whereIn('name', $permissionNames)->pluck('name')->toArray());
+                                if ($record->name === 'Super Admin') {
+                                    $component->state($permissionNames);
+                                } else {
+                                    $component->state($record->permissions->whereIn('name', $permissionNames)->pluck('name')->toArray());
+                                }
                             }
                         })
                         ->saveRelationshipsUsing(function ($record, $state) use ($permissionNames) {

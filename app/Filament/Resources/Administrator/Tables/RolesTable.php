@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Administrator\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 
@@ -29,7 +30,10 @@ class RolesTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                ViewAction::make()
+                    ->hidden(fn ($record) => $record->name !== 'Super Admin'),
+                EditAction::make()
+                    ->hidden(fn ($record) => $record->name === 'Super Admin'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

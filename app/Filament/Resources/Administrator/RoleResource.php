@@ -11,6 +11,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\Administrator\Schemas\RoleForm;
 use App\Filament\Resources\Administrator\Tables\RolesTable;
+use Illuminate\Database\Eloquent\Model;
 
 class RoleResource extends Resource
 {
@@ -34,6 +35,16 @@ class RoleResource extends Resource
         return RolesTable::configure($table);
     }
 
+    public static function canEdit(Model $record): bool
+    {
+        return $record->name !== 'Super Admin';
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return $record->name !== 'Super Admin';
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -46,6 +57,7 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
+            'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
