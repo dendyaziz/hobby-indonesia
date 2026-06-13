@@ -68,6 +68,23 @@ class UsersTable
             ])
             ->recordActions([
                 EditAction::make(),
+                \Filament\Actions\Action::make('resend_invitation')
+                    ->label('Resend Invitation')
+                    ->icon('heroicon-o-envelope')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Resend Invitation')
+                    ->modalDescription('Are you sure you want to resend the email invitation?.')
+                    ->modalSubmitActionLabel('Yes, resend it')
+                    ->action(function (\App\Models\User $record) {
+                        $record->notify(new \App\Notifications\AdminPasswordSetupNotification());
+                        \Filament\Notifications\Notification::make()
+                            ->title('Invitation resent successfully.')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn (\App\Models\User $record) => $record->password === null)
+                    ->authorize('update'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

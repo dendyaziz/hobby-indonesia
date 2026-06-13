@@ -35,6 +35,12 @@ class SetupPassword extends SimplePage
             return;
         }
 
+        $userModel = User::findOrFail($user);
+
+        if ($userModel->password !== null) {
+            abort(403, 'Password has already been set. This invitation link is no longer valid.');
+        }
+
         $this->user = $user;
         $this->form->fill();
     }
