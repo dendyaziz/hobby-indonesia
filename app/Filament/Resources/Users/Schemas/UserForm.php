@@ -32,11 +32,19 @@ class UserForm
                     ->visible(fn (?User $record): bool => $record?->id === auth()->id())
                     ->maxLength(255),
                 Select::make('roles')
-                    ->relationship('roles', 'name')
+                    ->relationship(
+                        name: 'roles',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query, ?User $record) => $query->when(
+                            ! ($record?->hasRole('Super Admin') ?? false),
+                            fn (Builder $q) => $q->where('name', '!=', 'Super Admin')
+                        )
+                    )
                     ->multiple()
-                    ->required()
+                    ->required(fn (?User $record): bool => ! ($record?->hasRole('Super Admin') ?? false))
                     ->preload()
-                    ->searchable(),
+                    ->searchable()
+                    ->disabled(fn (?User $record): bool => $record?->hasRole('Super Admin') ?? false),
             ]);
     }
 }

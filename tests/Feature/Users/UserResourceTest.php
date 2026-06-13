@@ -59,11 +59,13 @@ it('correctly computes status column for users', function () {
 });
 
 it('can create a user', function () {
+    $writerRole = \Spatie\Permission\Models\Role::where('name', 'Writer')->first();
+
     Livewire::test(CreateUser::class)
         ->fillForm([
             'name' => 'John Doe',
             'email' => 'john@example.com',
-            'password' => 'password123',
+            'roles' => [$writerRole->id],
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -78,15 +80,18 @@ it('can create a user', function () {
 });
 
 it('can edit a user', function () {
+    $writerRole = \Spatie\Permission\Models\Role::where('name', 'Writer')->first();
     $user = User::factory()->create([
         'name' => 'Old Name',
     ]);
+    $user->assignRole($writerRole);
 
     Livewire::test(EditUser::class, [
         'record' => $user->getKey(),
     ])
         ->fillForm([
             'name' => 'New Name',
+            'roles' => [$writerRole->id],
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -95,6 +100,25 @@ it('can edit a user', function () {
         'id' => $user->id,
         'name' => 'New Name',
     ]);
+});
+
+it('hides Super Admin role option when creating a user', function () {
+    Livewire::test(CreateUser::class)
+        ->assertFormFieldExists('roles', function (Select $field): bool {
+            $options = $field->getOptions();
+            return ! array_key_exists('Super Admin', $options) && ! in_array('Super Admin', $options);
+        });
+});
+
+it('disables roles field when editing a Super Admin user', function () {
+    $superAdminRole = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
+    $superAdmin = User::factory()->create();
+    $superAdmin->assignRole($superAdminRole);
+
+    Livewire::test(EditUser::class, [
+        'record' => $superAdmin->getKey(),
+    ])
+        ->assertFormFieldDisabled('roles');
 });
 
 it('can soft delete a user', function () {
