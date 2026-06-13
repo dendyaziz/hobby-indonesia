@@ -145,7 +145,8 @@ class ManageSocialMedia extends Page
                         Actions::make([
                             Action::make('save')
                                 ->submit('save')
-                                ->keyBindings(['mod+s']),
+                                ->keyBindings(['mod+s'])
+                                ->visible(fn () => auth()->user()->can('manage SocialMedia')),
                         ]),
                     ]),
             ])
