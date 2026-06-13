@@ -8,6 +8,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use App\Filament\Pages\Auth\SetupPassword;
 use App\Filament\Pages\Dashboard;
+use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Illuminate\Support\Facades\Route;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -39,6 +40,8 @@ class AdminPanelProvider extends PanelProvider
                 Route::get('/password/setup/{user}', SetupPassword::class)
                     ->middleware(['signed'])
                     ->name('password.setup');
+                Route::get('/password/reset/{token}', ResetPassword::class)
+                    ->name('password.reset');
             })
             ->pages([
                 Dashboard::class,
