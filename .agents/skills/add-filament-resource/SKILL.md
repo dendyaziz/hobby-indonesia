@@ -198,6 +198,31 @@ Use this skill whenever you are tasked with creating a new model, database migra
           $this->form->fill($this->getRecord()?->attributesToArray());
       }
       ```
+    - **Permission-Based Access & Save Action Visibility**:
+      - When restricting access to singular resource pages, conditionally disable the entire form based on the permission (e.g. `->disabled(! auth()->user()->can('manage ModelName'))`).
+      - You **must also conditionally hide the Save action/button** in the form footer using `->visible()` so it does not render when the user only has view/read-only access.
+      - **Example**:
+        ```php
+        public function form(Schema $schema): Schema
+        {
+            return $schema
+                ->disabled(! auth()->user()->can('manage SocialMedia'))
+                ->components([
+                    Form::make([
+                        // ...
+                    ])
+                        ->livewireSubmitHandler('save')
+                        ->footer([
+                            Actions::make([
+                                Action::make('save')
+                                    ->submit('save')
+                                    ->keyBindings(['mod+s'])
+                                    ->visible(fn () => auth()->user()->can('manage SocialMedia')),
+                            ]),
+                        ]),
+                ]);
+        }
+        ```
     - **Seeding**: Always seed the default singular record using `firstOrCreate()` within `DatabaseSeeder.php` rather than directly in database migrations, allowing standard application-wide seeding practices.
 
 10. **Database Migrations Safety**:
