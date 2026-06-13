@@ -58,6 +58,12 @@ class UsersTable
                     ->dateTime()
                     ->sortable(),
 
+                TextColumn::make('activated_at')
+                    ->label('Activated at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
