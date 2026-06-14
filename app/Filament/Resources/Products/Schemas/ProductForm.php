@@ -183,7 +183,7 @@ class ProductForm
                         Section::make('Availability')
                             ->schema([
                                 Radio::make('availability')
-                                    ->label('status')
+                                    ->label('Status')
                                     ->options([
                                         'Available' => 'Available',
                                         'Out of stock' => 'Out of stock',
