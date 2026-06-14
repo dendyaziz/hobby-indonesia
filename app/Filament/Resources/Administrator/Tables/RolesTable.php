@@ -30,10 +30,9 @@ class RolesTable
                 //
             ])
             ->recordActions([
-                ViewAction::make()
-                    ->hidden(fn ($record) => $record->name !== 'Super Admin'),
                 EditAction::make()
                     ->hidden(fn ($record) => $record->name === 'Super Admin'),
+                ViewAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
