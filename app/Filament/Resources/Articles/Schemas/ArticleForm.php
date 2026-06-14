@@ -29,7 +29,7 @@ class ArticleForm
                                     ->required()
                                     ->maxLength(150)
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn(string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                                    ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                                 TextInput::make('slug')
                                     ->disabled()

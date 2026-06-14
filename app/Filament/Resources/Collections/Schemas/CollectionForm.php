@@ -5,10 +5,10 @@ namespace App\Filament\Resources\Collections\Schemas;
 use App\Models\Collection;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
 class CollectionForm
@@ -34,7 +34,8 @@ class CollectionForm
                                     ->required()
                                     ->maxLength(100)
                                     ->unique(Collection::class, 'slug', ignoreRecord: true),
-                            ]),
+                            ])
+                            ->columns(2),
                     ])
                     ->columnSpan(['lg' => 2]),
 

@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Categories\Schemas;
 
 use App\Models\Category;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
 class CategoryForm
@@ -31,7 +31,8 @@ class CategoryForm
                             ->required()
                             ->maxLength(50)
                             ->unique(Category::class, 'slug', ignoreRecord: true),
-                    ]),
+                    ])
+                    ->columns(2),
             ]);
     }
 }
