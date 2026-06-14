@@ -11,7 +11,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -26,24 +25,21 @@ class SubCategoriesRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Section::make()
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->maxLength(30)
-                            ->unique(Category::class, 'name', ignoreRecord: true)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(30)
+                    ->unique(Category::class, 'name', ignoreRecord: true)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
-                        TextInput::make('slug')
-                            ->disabled()
-                            ->dehydrated()
-                            ->required()
-                            ->maxLength(50)
-                            ->unique(Category::class, 'slug', ignoreRecord: true),
-                    ])
-                    ->columns(2),
-            ]);
+                TextInput::make('slug')
+                    ->disabled()
+                    ->dehydrated()
+                    ->required()
+                    ->maxLength(50)
+                    ->unique(Category::class, 'slug', ignoreRecord: true),
+            ])
+            ->columns(2);
     }
 
     public function table(Table $table): Table

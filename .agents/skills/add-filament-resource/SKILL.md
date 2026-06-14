@@ -140,7 +140,8 @@ Use this skill whenever you are tasked with creating a new model, database migra
      - Do NOT add an `'image'` key in the factory's default `definition()` array since there is no `image` database column. Seed media attachments, if needed, via `afterCreating` hooks using Spatie's faked media APIs in feature tests.
 
 5. **Form & Table Styling Conventions**:
-   - **Filament Form Sections**: Always wrap all resource form inputs inside a Filament Form `Section::make()`. If a Resource form does not have status-related fields, do not configure a columns value (`->columns()`) on the section or schema, and make sure to append `->columnSpanFull()` to the section component so it occupies the whole space (1-column full width).
+   - **Filament Form Sections**: Always wrap all page-level resource form inputs inside a Filament Form `Section::make()`. If a Resource form does not have status-related fields, do not configure a columns value (`->columns()`) on the section or schema, and make sure to append `->columnSpanFull()` to the section component so it occupies the whole space (1-column full width).
+     - *Popup/Modal Forms Exception*: Do NOT use `Section::make()` or `Group::make()` containers for forms displayed inside popup modals (e.g. in RelationManagers or Modal Actions). Place the form components directly in the schema/components array.
    - **Form Grouping & Layout**:
      - If the model has status or date-related fields (e.g. `status`, `started_at`, `ended_at`, `availability`), organize the form into a two-group layout using a parent column span structure of 3 (`->columns(3)`):
        - **First Group (Main Fields)**: Occupies 2 columns (`Group::make()->columnSpan(['lg' => 2])`). Contains the main fields wrapped inside one or more `Section::make()`. If the main fields exceed 5 components, split them into multiple sections. The first/main section commonly does not have a label.
