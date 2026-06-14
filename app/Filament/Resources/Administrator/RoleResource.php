@@ -18,9 +18,9 @@ class RoleResource extends Resource
     protected static ?string $model = Role::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
-    
+
     protected static string|UnitEnum|null $navigationGroup = 'Administrator';
-    
+
     protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'administrator/roles';
@@ -57,7 +57,6 @@ class RoleResource extends Resource
         return [
             'index' => Pages\ListRoles::route('/'),
             'create' => Pages\CreateRole::route('/create'),
-            'view' => Pages\ViewRole::route('/{record}'),
             'edit' => Pages\EditRole::route('/{record}/edit'),
         ];
     }
