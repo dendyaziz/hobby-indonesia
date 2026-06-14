@@ -5,8 +5,11 @@ namespace App\Filament\Resources\Articles;
 use App\Filament\Resources\Articles\Pages\CreateArticle;
 use App\Filament\Resources\Articles\Pages\EditArticle;
 use App\Filament\Resources\Articles\Pages\ListArticles;
+use App\Filament\Resources\Articles\Pages\ViewArticle;
 use App\Filament\Resources\Articles\Schemas\ArticleForm;
 use App\Filament\Resources\Articles\Tables\ArticlesTable;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use App\Models\Article;
 use BackedEnum;
 use UnitEnum;
@@ -24,6 +27,16 @@ class ArticleResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = 'Public';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            ViewArticle::class,
+            EditArticle::class,
+        ]);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -47,6 +60,7 @@ class ArticleResource extends Resource
         return [
             'index' => ListArticles::route('/'),
             'create' => CreateArticle::route('/create'),
+            'view' => ViewArticle::route('/{record}'),
             'edit' => EditArticle::route('/{record}/edit'),
         ];
     }
