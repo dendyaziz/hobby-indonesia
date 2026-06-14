@@ -10,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DissociateAction;
 use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -48,6 +49,7 @@ class SubCategoriesRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make(),
+                ViewAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
