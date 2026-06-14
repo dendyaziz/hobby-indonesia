@@ -230,3 +230,10 @@ Use this skill whenever you are tasked with creating a new model, database migra
     - **Migration Modification Flow**: If a migration needs changes or a table needs recreation:
       - Instruct the user to use target rollbacks (e.g. `php artisan migrate:rollback --step=1` to roll back the single last migration).
       - Modify the specific migration file and run `php artisan migrate` to re-apply the schema changes safely.
+
+11. **Resource Permissions Registration**:
+    - Every newly created CRUD Resource must be registered in the permission system:
+      1. Add the model name to the `$models` array in `database/seeders/RolesAndPermissionsSeeder.php` so its dynamic view and manage permissions are created.
+      2. Map the model name to the corresponding permission group category in `app/Filament/Resources/Administrator/Schemas/RoleForm.php` (inside `$groups` array) so it can be managed and assigned to roles in the Filament UI.
+      3. Create a corresponding policy for the model in `app/Policies/` extending `BasePolicy` to automatically enforce the permissions (e.g. `CollectionPolicy` for `Collection`).
+

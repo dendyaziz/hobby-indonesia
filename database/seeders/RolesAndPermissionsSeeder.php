@@ -14,11 +14,10 @@ class RolesAndPermissionsSeeder extends Seeder
         // 1. Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 2. Define all models in your system
         $models = [
             'Article', 'Testimony', 'Faq', 'HeroBanner', 'ProductBanner', 'ThirdBanner', 'ResellerBanner', 'Product', 
             'Category', 'Event', 'Partner', 'User', 'Role', 
-            'Contact', 'SocialMedia'
+            'Contact', 'SocialMedia', 'Collection'
         ];
 
         // 3. Create view and manage permissions in the database
