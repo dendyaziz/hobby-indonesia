@@ -180,9 +180,10 @@ class ProductForm
 
                 Group::make()
                     ->schema([
-                        Section::make('Status')
+                        Section::make('Availability')
                             ->schema([
                                 Radio::make('availability')
+                                    ->label('status')
                                     ->options([
                                         'Available' => 'Available',
                                         'Out of stock' => 'Out of stock',
