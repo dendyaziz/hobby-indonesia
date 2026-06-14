@@ -10,6 +10,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -74,6 +75,7 @@ class UsersTable
             ])
             ->recordActions([
                 EditAction::make(),
+                ViewAction::make(),
                 \Filament\Actions\ActionGroup::make([
                     \Filament\Actions\Action::make('resend_invitation')
                         ->label('Resend Invitation')
