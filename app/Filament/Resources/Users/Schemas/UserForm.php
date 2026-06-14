@@ -22,7 +22,8 @@ class UserForm
                     ->email()
                     ->required()
                     ->maxLength(255)
-                    ->unique(User::class, 'email', ignoreRecord: true),
+                    ->unique(User::class, 'email', ignoreRecord: true)
+                    ->disabled(fn (?User $record): bool => $record !== null && $record->id !== auth()->id()),
                 Select::make('roles')
                     ->relationship(
                         name: 'roles',

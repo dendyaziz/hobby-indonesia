@@ -114,6 +114,29 @@ it('hides Super Admin role option when creating a user', function () {
         });
 });
 
+it('disables email field when editing another user', function () {
+    $otherUser = User::factory()->create();
+
+    Livewire::test(EditUser::class, [
+        'record' => $otherUser->getKey(),
+    ])
+        ->assertFormFieldDisabled('email');
+});
+
+it('enables email field when editing own user record', function () {
+    $currentUser = auth()->user();
+
+    Livewire::test(EditUser::class, [
+        'record' => $currentUser->getKey(),
+    ])
+        ->assertFormFieldEnabled('email');
+});
+
+it('enables email field when creating a new user', function () {
+    Livewire::test(CreateUser::class)
+        ->assertFormFieldEnabled('email');
+});
+
 it('disables roles field when editing a Super Admin user', function () {
     $superAdminRole = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
     $superAdmin = User::factory()->create();
