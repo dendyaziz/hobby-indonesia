@@ -17,6 +17,7 @@ class Category extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'parent_category_id',
     ];
 
@@ -25,6 +26,12 @@ class Category extends Model
      */
     protected static function booted(): void
     {
+        static::saving(function (Category $category) {
+            if (empty($category->slug) && !empty($category->name)) {
+                $category->slug = \Illuminate\Support\Str::slug($category->name);
+            }
+        });
+
         static::deleting(function (Category $category) {
             if ($category->subCategories()->exists()) {
                 \Filament\Notifications\Notification::make()

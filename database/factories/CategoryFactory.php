@@ -17,8 +17,10 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
+        $name = substr($this->faker->unique()->words(2, true), 0, 30);
         return [
-            'name' => substr($this->faker->words(2, true), 0, 30),
+            'name' => $name,
+            'slug' => \Illuminate\Support\Str::slug($name),
             'parent_category_id' => null,
         ];
     }

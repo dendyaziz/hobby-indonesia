@@ -15,8 +15,10 @@ use Filament\Actions\Testing\TestAction;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
 });
 
@@ -140,4 +142,41 @@ it('restricts deleting a parent category that has subcategories', function () {
     $this->assertDatabaseHas('categories', [
         'id' => $parent->id,
     ]);
+});
+
+it('enforces uniqueness on category name', function () {
+    Category::factory()->create(['name' => 'Strategy']);
+
+    // Attempting to create parent category with duplicate name 'Strategy' should fail
+    Livewire::test(CreateCategory::class)
+        ->fillForm([
+            'name' => 'Strategy',
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('enforces uniqueness on subcategory name even if parent has that name', function () {
+    $parent = Category::factory()->create(['name' => 'Strategy']);
+    Category::factory()->create(['name' => 'Roleplay']);
+
+    // Attempting to create subcategory with duplicate name 'Roleplay' should fail
+    Livewire::test(SubCategoriesRelationManager::class, [
+        'ownerRecord' => $parent,
+        'pageClass' => EditCategory::class,
+    ])
+        ->callAction(TestAction::make('create')->table(), [
+            'name' => 'Roleplay',
+        ])
+        ->assertHasTableActionErrors(['name' => 'unique']);
+        
+    // Attempting to create subcategory with duplicate name 'Strategy' (same as parent) should fail
+    Livewire::test(SubCategoriesRelationManager::class, [
+        'ownerRecord' => $parent,
+        'pageClass' => EditCategory::class,
+    ])
+        ->callAction(TestAction::make('create')->table(), [
+            'name' => 'Strategy',
+        ])
+        ->assertHasTableActionErrors(['name' => 'unique']);
 });

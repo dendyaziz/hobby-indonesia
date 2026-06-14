@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Categories\RelationManagers;
 
+use App\Models\Category;
 use Filament\Actions\AssociateAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -15,8 +16,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class SubCategoriesRelationManager extends RelationManager
 {
@@ -30,7 +33,17 @@ class SubCategoriesRelationManager extends RelationManager
                     ->schema([
                         TextInput::make('name')
                             ->required()
-                            ->maxLength(30),
+                            ->maxLength(30)
+                            ->unique(Category::class, 'name', ignoreRecord: true)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn (string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+
+                        TextInput::make('slug')
+                            ->disabled()
+                            ->dehydrated()
+                            ->required()
+                            ->maxLength(50)
+                            ->unique(Category::class, 'slug', ignoreRecord: true),
                     ]),
             ]);
     }
@@ -44,6 +57,10 @@ class SubCategoriesRelationManager extends RelationManager
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('slug')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
