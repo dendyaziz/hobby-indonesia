@@ -11,6 +11,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,11 +24,14 @@ class ItemsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Select::make('product_id')
-                    ->relationship('product', 'name', fn (Builder $query) => $query->latest())
-                    ->searchable()
-                    ->preload()
-                    ->required(),
+                Section::make()
+                    ->schema([
+                        Select::make('product_id')
+                            ->relationship('product', 'name', fn (Builder $query) => $query->latest())
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                    ]),
             ]);
     }
 

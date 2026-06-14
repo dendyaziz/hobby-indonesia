@@ -10,6 +10,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use BackedEnum;
 use UnitEnum;
@@ -52,7 +53,10 @@ class ManageSocialMedia extends Page
             ->disabled(! auth()->user()->can('manage SocialMedia'))
             ->components([
                 Form::make([
-                    TextInput::make('facebook')
+                    Section::make()
+                        ->columnSpanFull()
+                        ->schema([
+                            TextInput::make('facebook')
                         ->label('Facebook')
                         ->maxLength(100)
                         ->helperText('Input account username or URL')
@@ -139,6 +143,7 @@ class ManageSocialMedia extends Page
                                 }
                             }
                         ]),
+                    ]),
                 ])
                     ->livewireSubmitHandler('save')
                     ->footer([

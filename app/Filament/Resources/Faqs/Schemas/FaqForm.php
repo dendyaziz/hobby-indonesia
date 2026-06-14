@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Faqs\Schemas;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 
 class FaqForm
 {
@@ -12,22 +13,26 @@ class FaqForm
     {
         return $schema
             ->components([
-                TextInput::make('question')
-                    ->required()
-                    ->columnSpanFull(),
-                RichEditor::make('answer')
-                    ->required()
-                    ->toolbarButtons([
-                        'bold',
-                        'italic',
-                        'underline',
-                        'link',
-                        'bulletList',
-                        'orderedList',
-                        'undo',
-                        'redo',
+                Section::make()
+                    ->columnSpanFull()
+                    ->schema([
+                        TextInput::make('question')
+                            ->required()
+                            ->columnSpanFull(),
+                        RichEditor::make('answer')
+                            ->required()
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'undo',
+                                'redo',
+                            ])
+                            ->columnSpanFull(),
                     ])
-                    ->columnSpanFull(),
             ]);
     }
 }

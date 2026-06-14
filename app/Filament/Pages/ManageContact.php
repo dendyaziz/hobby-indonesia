@@ -11,6 +11,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use BackedEnum;
 use UnitEnum;
@@ -53,7 +54,10 @@ class ManageContact extends Page
             ->disabled(! auth()->user()->can('manage Contact'))
             ->components([
                 Form::make([
-                    TextInput::make('company_name')
+                    Section::make()
+                        ->columnSpanFull()
+                        ->schema([
+                            TextInput::make('company_name')
                         ->label('Company Name')
                         ->maxLength(50),
 
@@ -70,6 +74,7 @@ class ManageContact extends Page
                     Textarea::make('address')
                         ->label('Address')
                         ->rows(3),
+                    ]),
                 ])
                     ->livewireSubmitHandler('save')
                     ->footer([

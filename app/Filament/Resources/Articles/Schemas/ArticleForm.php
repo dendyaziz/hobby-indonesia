@@ -69,6 +69,7 @@ class ArticleForm
                             ->schema([
 
                                 Radio::make('status')
+                                    ->label('Status')
                                     ->options([
                                         'draft' => 'Draft',
                                         'published' => 'Published',

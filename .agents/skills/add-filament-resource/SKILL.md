@@ -140,10 +140,16 @@ Use this skill whenever you are tasked with creating a new model, database migra
      - Do NOT add an `'image'` key in the factory's default `definition()` array since there is no `image` database column. Seed media attachments, if needed, via `afterCreating` hooks using Spatie's faked media APIs in feature tests.
 
 5. **Form & Table Styling Conventions**:
+   - **Filament Form Sections**: Always wrap all resource form inputs inside a Filament Form `Section::make()`. If a Resource form does not have status-related fields, do not configure a columns value (`->columns()`) on the section or schema, and make sure to append `->columnSpanFull()` to the section component so it occupies the whole space (1-column full width).
+   - **Form Grouping & Layout**:
+     - If the model has status or date-related fields (e.g. `status`, `started_at`, `ended_at`, `availability`), organize the form into a two-group layout using a parent column span structure of 3 (`->columns(3)`):
+       - **First Group (Main Fields)**: Occupies 2 columns (`Group::make()->columnSpan(['lg' => 2])`). Contains the main fields wrapped inside one or more `Section::make()`. If the main fields exceed 5 components, split them into multiple sections. The first/main section commonly does not have a label.
+       - **Second Group (Status/Date Fields)**: Occupies 1 column (`Group::make()->columnSpan(['lg' => 1])`). Contains the status-related fields. If the group has both status and other fields (e.g. date ranges like `start_date`, `end_date`), split the actual status field and those other fields into separate sections (e.g. one `Section::make('Visibility')` for the status, and another `Section::make('Schedule')` for the dates) to keep them clean. Add context-related labels to both sections. Use a simple label like `'Status'` for the status input itself, preventing repetitive copywriting.
    - **Status Badges (Capitalization)**: For Filament table columns displaying a status using a text badge, capitalize it using:
      ```php
      ->formatStateUsing(fn (string $state): string => \Illuminate\Support\Str::headline($state))
      ```
+   - **View Action in Tables**: Every Filament resource table must include a `ViewAction::make(),` in its `recordActions` array alongside the `EditAction::make(),` to match the project's standard action patterns.
    - **Status Form Fields**: Always use the `Radio` button component (e.g., `Radio::make('status')`) instead of `Select` or `Checkbox` for status fields.
    - **Relationship Select Fields (Preloading & Sorting)**:
      - **Preloading**: If the Select options are retrieved from another model (relationship options), always append `->preload()` to ensure that the dropdown option suggestions are loaded when the page loads, rather than requiring user search input.
