@@ -39,6 +39,7 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('position')
                     ->label('Sequence')
+                    ->prefix('#')
                     ->sortable(),
                 TextColumn::make('product.name')
                     ->label('Product Name')
