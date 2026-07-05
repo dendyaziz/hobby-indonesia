@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Contact;
+use App\Models\SocialMedia;
 use Illuminate\Support\Str;
 
 return [
@@ -134,6 +135,7 @@ return [
 
     'serializable_classes' => [
         Contact::class,
+        SocialMedia::class,
     ],
 
 ];
