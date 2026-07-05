@@ -23,7 +23,6 @@ test('it returns the first contact model as a resource if it exists', function (
         ->assertOk()
         ->assertJson([
             'data' => [
-                'id' => $contact->id,
                 'company_name' => 'Hobby Indonesia Test',
                 'telephone' => '021-99998888',
                 'email' => 'test@hobbyindonesia.com',
@@ -31,13 +30,14 @@ test('it returns the first contact model as a resource if it exists', function (
             ],
         ])
         ->assertJsonMissing([
+            'id',
             'created_at',
             'updated_at',
         ]);
 });
 
 test('it caches the contact data for 30 days', function () {
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('contact'))->toBeFalse();
 
     $contact = Contact::factory()->create();
 
@@ -45,8 +45,8 @@ test('it caches the contact data for 30 days', function () {
     $this->getJson('/api/v1/contact')->assertOk();
 
     // Verify cache has it
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeTrue();
-    expect(Cache::tags(['public_app'])->get('app_contact')->id)->toBe($contact->id);
+    expect(Cache::tags(['public'])->has('contact'))->toBeTrue();
+    expect(Cache::tags(['public'])->get('contact')->id)->toBe($contact->id);
 });
 
 test('it clears the cache when the contact model is updated', function () {
@@ -54,7 +54,7 @@ test('it clears the cache when the contact model is updated', function () {
 
     // Call endpoint to populate cache
     $this->getJson('/api/v1/contact')->assertOk();
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeTrue();
+    expect(Cache::tags(['public'])->has('contact'))->toBeTrue();
 
     // Update the contact model
     $contact->update([
@@ -62,7 +62,7 @@ test('it clears the cache when the contact model is updated', function () {
     ]);
 
     // Verify cache is cleared
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('contact'))->toBeFalse();
 });
 
 test('it clears the cache when the contact model is deleted', function () {
@@ -70,13 +70,13 @@ test('it clears the cache when the contact model is deleted', function () {
 
     // Call endpoint to populate cache
     $this->getJson('/api/v1/contact')->assertOk();
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeTrue();
+    expect(Cache::tags(['public'])->has('contact'))->toBeTrue();
 
     // Delete the contact model
     $contact->delete();
 
     // Verify cache is cleared
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('contact'))->toBeFalse();
 });
 
 test('it can clear all public caches by tag', function () {
@@ -84,11 +84,11 @@ test('it can clear all public caches by tag', function () {
 
     // Call endpoint to populate cache
     $this->getJson('/api/v1/contact')->assertOk();
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeTrue();
+    expect(Cache::tags(['public'])->has('contact'))->toBeTrue();
 
     // Flush the tag
-    Cache::tags(['public_app'])->flush();
+    Cache::tags(['public'])->flush();
 
     // Verify cache is cleared
-    expect(Cache::tags(['public_app'])->has('app_contact'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('contact'))->toBeFalse();
 });

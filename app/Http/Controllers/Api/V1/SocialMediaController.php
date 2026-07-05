@@ -14,7 +14,7 @@ class SocialMediaController extends Controller
      */
     public function show(): SocialMediaResource
     {
-        $socialMedia = Cache::tags(['public_app'])->remember('company_social_media', now()->addDays(30), function () {
+        $socialMedia = Cache::tags(['public'])->remember('social-media', now()->addDays(30), function () {
             return SocialMedia::first();
         });
 

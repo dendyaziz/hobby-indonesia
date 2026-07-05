@@ -14,7 +14,7 @@ class ContactController extends Controller
      */
     public function show(): ContactResource
     {
-        $contact = Cache::tags(['public_app'])->remember('app_contact', now()->addDays(30), function () {
+        $contact = Cache::tags(['public'])->remember('contact', now()->addDays(30), function () {
             return Contact::first();
         });
 

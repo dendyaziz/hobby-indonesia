@@ -37,7 +37,7 @@ test('it returns the first social media model as a resource if it exists', funct
 });
 
 test('it caches the social media data for 30 days', function () {
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeFalse();
 
     $socialMedia = SocialMedia::factory()->create();
 
@@ -45,8 +45,8 @@ test('it caches the social media data for 30 days', function () {
     $this->getJson('/api/v1/social-media')->assertOk();
 
     // Verify cache has it
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeTrue();
-    expect(Cache::tags(['public_app'])->get('company_social_media')->id)->toBe($socialMedia->id);
+    expect(Cache::tags(['public'])->has('social-media'))->toBeTrue();
+    expect(Cache::tags(['public'])->get('social-media')->id)->toBe($socialMedia->id);
 });
 
 test('it clears the cache when the social media model is updated', function () {
@@ -54,7 +54,7 @@ test('it clears the cache when the social media model is updated', function () {
 
     // Call endpoint to populate cache
     $this->getJson('/api/v1/social-media')->assertOk();
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeTrue();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeTrue();
 
     // Update the social media model
     $socialMedia->update([
@@ -62,7 +62,7 @@ test('it clears the cache when the social media model is updated', function () {
     ]);
 
     // Verify cache is cleared
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeFalse();
 });
 
 test('it clears the cache when the social media model is deleted', function () {
@@ -70,13 +70,13 @@ test('it clears the cache when the social media model is deleted', function () {
 
     // Call endpoint to populate cache
     $this->getJson('/api/v1/social-media')->assertOk();
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeTrue();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeTrue();
 
     // Delete the social media model
     $socialMedia->delete();
 
     // Verify cache is cleared
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeFalse();
 });
 
 test('it can clear all public caches by tag', function () {
@@ -84,11 +84,11 @@ test('it can clear all public caches by tag', function () {
 
     // Call endpoint to populate cache
     $this->getJson('/api/v1/social-media')->assertOk();
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeTrue();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeTrue();
 
     // Flush the tag
-    Cache::tags(['public_app'])->flush();
+    Cache::tags(['public'])->flush();
 
     // Verify cache is cleared
-    expect(Cache::tags(['public_app'])->has('company_social_media'))->toBeFalse();
+    expect(Cache::tags(['public'])->has('social-media'))->toBeFalse();
 });

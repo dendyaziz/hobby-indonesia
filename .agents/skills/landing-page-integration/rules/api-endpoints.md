@@ -49,35 +49,37 @@ Public API endpoints must never leak database IDs, timestamps, or internal colum
 
 ## 3. Caching & Invalidation (Redis Cache Tags)
 
-All public endpoints are cached using Redis with the general tag `public_app` for maintenance/global flushing.
+All public endpoints are cached using Redis with the general tag `public` for maintenance/global flushing.
 
 ### A. Cache Key Naming Conventions
-Differentiate keys clearly between lists, paginated lists, and individual details:
-- **Singular/Detail key**: `{model_plural}:show:{slug_or_identifier}` (e.g., `articles:show:my-first-article`)
-- **List/Collection key**: `{model_plural}:index:limit:{limit}:page:{page}` (e.g., `articles:index:limit:10:page:1`)
+Follow the structure below using the kebab-case version of the model name, dash `-` for word-space replacement, and double underscores `__` as separators:
+- **Singleton model key**: `{model-kebab}` (e.g., `contact`, `social-media`)
+- **Singular/Detail key**: `{model-kebab}__{slug_or_identifier}` (e.g., `article__my-first-article`)
+- **List/Collection key**: `{model-kebab}__list` (e.g., `article__list`, `hero-banner__list`)
+- **Paginated List key**: `{model-kebab}__pagination_limit_{limit}_page_{page}` (e.g., `hero-banner__pagination_limit_10_page_1`)
 
 ### B. Caching Implementation
-Store cache under the general `public_app` tag for global clearing:
+Store cache under the general `public` tag for global clearing:
 ```php
-$contact = Cache::tags(['public_app'])->remember('app_contact', now()->addDays(30), function () {
+$contact = Cache::tags(['public'])->remember('contact', now()->addDays(30), function () {
     return Contact::first();
 });
 ```
 
 ### C. Invalidation & Cache Clearing
-- **Note on Laravel Limitation**: In Laravel, if an item is stored with a tag (`Cache::tags(['public_app'])->remember(...)`), you **must** specify the tag when forgetting it: `Cache::tags(['public_app'])->forget($key)`. Calling direct `Cache::forget($key)` will not remove tagged cache entries.
+- **Note on Laravel Limitation**: In Laravel, if an item is stored with a tag (`Cache::tags(['public'])->remember(...)`), you **must** specify the tag when forgetting it: `Cache::tags(['public'])->forget($key)`. Calling direct `Cache::forget($key)` will not remove tagged cache entries.
 - **Detail vs. List Clearing**:
   - When a model is updated or saved, **only** invalidate its own detail cache key and the associated lists. Do not clear detail caches of other models.
-  - To clear list caches without clearing other details, tag list caches with a model-specific list tag (e.g. `articles:list`) and flush that tag when any model changes:
+  - To clear list caches without clearing other details, tag list caches with a model-specific list tag (e.g. `article:list`) and flush that tag when any model changes:
   ```php
   // Caching a paginated list:
-  Cache::tags(['public_app', 'articles:list'])->remember("articles:index:limit:{$limit}:page:{$page}", ...);
+  Cache::tags(['public', 'article:list'])->remember("article__pagination_limit_{$limit}_page_{$page}", ...);
 
   // In Model booted() method when saved/deleted:
   // 1. Invalidate own detail cache:
-  Cache::tags(['public_app'])->forget("articles:show:{$this->slug}");
+  Cache::tags(['public'])->forget("article__{$this->slug}");
   // 2. Invalidate all article lists (using model-specific list tag):
-  Cache::tags(['articles:list'])->flush();
+  Cache::tags(['article:list'])->flush();
   ```
 
 ---

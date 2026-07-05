@@ -28,11 +28,11 @@ class SocialMedia extends Model
     protected static function booted(): void
     {
         static::saved(function (): void {
-            Cache::tags(['public_app'])->forget('company_social_media');
+            Cache::tags(['public'])->forget('social-media');
         });
 
         static::deleted(function (): void {
-            Cache::tags(['public_app'])->forget('company_social_media');
+            Cache::tags(['public'])->forget('social-media');
         });
     }
 }

@@ -28,11 +28,11 @@ class Contact extends Model
     protected static function booted(): void
     {
         static::saved(function (): void {
-            Cache::tags(['public_app'])->forget('app_contact');
+            Cache::tags(['public'])->forget('contact');
         });
 
         static::deleted(function (): void {
-            Cache::tags(['public_app'])->forget('app_contact');
+            Cache::tags(['public'])->forget('contact');
         });
     }
 }
