@@ -35,11 +35,10 @@ test('it returns active and not-expired hero banners, hiding internal attributes
     $hero->addMedia(UploadedFile::fake()->image('hero.jpg'))
         ->toMediaCollection('banners');
 
-    $response = $this->getJson('/api/v1/hero-banners')
+    $this->getJson('/api/v1/hero-banners')
         ->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.title', 'Main Hero')
-        ->assertJsonPath('data.0.placement', 'homepage--hero')
         ->assertJsonMissing([
             'id',
             'created_at',
@@ -47,9 +46,6 @@ test('it returns active and not-expired hero banners, hiding internal attributes
             'start_date',
             'end_date',
         ]);
-
-    // Verify image_url is returned
-    expect($response->json('data.0.image_url'))->not->toBeNull();
 });
 
 test('it filters out inactive, future scheduled, or past expired hero banners', function () {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
 class ContactController extends Controller
@@ -12,16 +13,22 @@ class ContactController extends Controller
     /**
      * Display the app contact.
      */
-    public function show(): ContactResource
+    public function show(): JsonResponse
     {
-        $contact = Cache::tags(['public'])->remember('contact', now()->addDays(30), function () {
-            return Contact::first();
+        $data = Cache::tags(['public'])->remember('contact', now()->addDays(30), function () {
+            $contact = Contact::first();
+
+            if (! $contact) {
+                return null;
+            }
+
+            return ContactResource::make($contact)->resolve();
         });
 
-        if (! $contact) {
+        if (! $data) {
             abort(404);
         }
 
-        return ContactResource::make($contact);
+        return response()->json(['data' => $data]);
     }
 }

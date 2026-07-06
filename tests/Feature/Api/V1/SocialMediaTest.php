@@ -46,7 +46,7 @@ test('it caches the social media data for 30 days', function () {
 
     // Verify cache has it
     expect(Cache::tags(['public'])->has('social-media'))->toBeTrue();
-    expect(Cache::tags(['public'])->get('social-media')->id)->toBe($socialMedia->id);
+    expect(Cache::tags(['public'])->get('social-media')['facebook'])->toBe($socialMedia->facebook);
 });
 
 test('it clears the cache when the social media model is updated', function () {

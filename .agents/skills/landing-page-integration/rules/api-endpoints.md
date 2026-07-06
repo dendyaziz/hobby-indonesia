@@ -43,7 +43,7 @@ Public API endpoints must never leak database IDs, timestamps, or internal colum
 
 ### B. List and Pagination Data (e.g. `index()`)
 - If paginated, always include both the **limit** and **page** number in the cache key because a page number alone is meaningless without knowing the number of items per page.
-- Do not cache the database paginator object directly if it contains state that breaks. Cache the resource collection or a structured array representation instead.
+- Do not cache raw Eloquent models, collections, or paginator objects directly, as they contain serialization state that can break upon unserialization. Always cache the resolved resource array representation (`resolve()`).
 
 ---
 
@@ -55,47 +55,70 @@ All public endpoints are cached using Redis with the general tag `public` for ma
 Follow the structure below using the kebab-case version of the model name, dash `-` for word-space replacement, and double underscores `__` as separators:
 - **Singleton model key**: `{model-kebab}` (e.g., `contact`, `social-media`)
 - **Singular/Detail key**: `{model-kebab}__{slug_or_identifier}` (e.g., `article__my-first-article`)
-- **List/Collection key**: `{model-kebab}__list` (e.g., `article__list`, `hero-banner__list`)
-- **Paginated List key**: `{model-kebab}__pagination_limit_{limit}_page_{page}` (e.g., `hero-banner__pagination_limit_10_page_1`)
+- **List/Collection key**: `{model-kebab}__list` (e.g., `article__list`, `hero-banner__list_{today}`)
+- **Paginated List key**: `{model-kebab}__pagination_limit_{limit}_page_{page}` (e.g., `article__pagination_limit_10_page_1`)
 
-### B. Caching Implementation
-Store cache under the general `public` tag for global clearing:
+### B. Caching Implementation (Caching Resolved Array)
+Always cache the transformed and resolved Resource output (plain PHP array) rather than the Eloquent model or collection. This avoids serialization issues:
 ```php
-$contact = Cache::tags(['public'])->remember('contact', now()->addDays(30), function () {
-    return Contact::first();
+$data = Cache::tags(['public'])->remember('contact', now()->addDays(30), function () {
+    $contact = Contact::first();
+
+    if (! $contact) {
+        return null;
+    }
+
+    return ContactResource::make($contact)->resolve();
 });
+
+if (! $data) {
+    abort(404);
+}
+
+return response()->json(['data' => $data]);
 ```
 
 ### C. Invalidation & Cache Clearing
 - **Note on Laravel Limitation**: In Laravel, if an item is stored with a tag (`Cache::tags(['public'])->remember(...)`), you **must** specify the tag when forgetting it: `Cache::tags(['public'])->forget($key)`. Calling direct `Cache::forget($key)` will not remove tagged cache entries.
 - **Detail vs. List Clearing**:
-  - When a model is updated or saved, **only** invalidate its own detail cache key and the associated lists. Do not clear detail caches of other models.
-  - To clear list caches without clearing other details, tag list caches with a model-specific list tag (e.g. `article:list`) and flush that tag when any model changes:
+  - When a model is updated or saved, invalidates its own detail cache key and/or associated lists.
+  - Forget the key from the tagged store on save or delete in the model's `booted()` method:
   ```php
-  // Caching a paginated list:
-  Cache::tags(['public', 'article:list'])->remember("article__pagination_limit_{$limit}_page_{$page}", ...);
-
-  // In Model booted() method when saved/deleted:
-  // 1. Invalidate own detail cache:
-  Cache::tags(['public'])->forget("article__{$this->slug}");
-  // 2. Invalidate all article lists (using model-specific list tag):
-  Cache::tags(['article:list'])->flush();
+  static::saved(function (): void {
+      Cache::tags(['public'])->forget('contact');
+  });
   ```
 
 ---
 
-## 4. Unserialization Whitelisting
+## 4. Banner API Endpoints Guidelines
 
-If caching Eloquent models, add the model class name to the `serializable_classes` array in `config/cache.php`:
-```php
-'serializable_classes' => [
-    \App\Models\Contact::class,
-    \App\Models\Article::class,
-],
-```
+When implementing API endpoints for banners (e.g., Hero Banners, Product Banners, etc.), adhere to the following rules:
+
+### A. Query Constraints & Filtering
+- **Active & Not Expired**: Always filter by active and non-expired records:
+  - `status === 'active'`
+  - `start_date` is null or in the past (`start_date <= today`)
+  - `end_date` is null or in the future (`end_date >= today`)
+- **Sorting**: Banners must always be sorted by `position` ASC.
+- **Eager Loading**: Eagerly load the `media` relationship (`with('media')`) to avoid N+1 queries when extracting image URLs.
+
+### B. Caching & Key Strategy
+- **Today Suffix**: Incorporate the current date string into the cache key to naturally expire caches across different days (e.g., `hero-banner__list_{$today}`).
+- **Duration**: Banner lists must only be cached for a duration of **1 day** (`now()->addDay()`).
+- **Invalidation**: In the model's `saved` and `deleted` event observers, generate the today string and forget the date-suffixed key:
+  ```php
+  static::saved(function (): void {
+      $today = now()->toDateString();
+      Cache::tags(['public'])->forget("hero-banner__list_{$today}");
+  });
+  ```
+
+### C. Public Resource Fields
+- **Hiding Placement**: Do not expose internal categorization columns like `placement` in the public API resource. Keep public banner fields limited to fields required by the UI (e.g., `title`, `position`, `type`, `url`, `image_url`).
 
 ---
 
 ## 5. Testing with Pest
 
-Verify cache invalidation and correct field masking (specifically checking that `id`, `created_at`, and `updated_at` are absent from the JSON) in your Pest feature tests.
+Verify cache invalidation and correct field masking (specifically checking that `id`, `created_at`, `updated_at`, and database columns like `placement` are absent from the JSON) in your Pest feature tests.

@@ -46,7 +46,7 @@ test('it caches the contact data for 30 days', function () {
 
     // Verify cache has it
     expect(Cache::tags(['public'])->has('contact'))->toBeTrue();
-    expect(Cache::tags(['public'])->get('contact')->id)->toBe($contact->id);
+    expect(Cache::tags(['public'])->get('contact')['company_name'])->toBe($contact->company_name);
 });
 
 test('it clears the cache when the contact model is updated', function () {

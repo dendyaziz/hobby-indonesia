@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SocialMediaResource;
 use App\Models\SocialMedia;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
 class SocialMediaController extends Controller
@@ -12,16 +13,22 @@ class SocialMediaController extends Controller
     /**
      * Display the company social media.
      */
-    public function show(): SocialMediaResource
+    public function show(): JsonResponse
     {
-        $socialMedia = Cache::tags(['public'])->remember('social-media', now()->addDays(30), function () {
-            return SocialMedia::first();
+        $data = Cache::tags(['public'])->remember('social-media', now()->addDays(30), function () {
+            $socialMedia = SocialMedia::first();
+
+            if (! $socialMedia) {
+                return null;
+            }
+
+            return SocialMediaResource::make($socialMedia)->resolve();
         });
 
-        if (! $socialMedia) {
+        if (! $data) {
             abort(404);
         }
 
-        return SocialMediaResource::make($socialMedia);
+        return response()->json(['data' => $data]);
     }
 }
