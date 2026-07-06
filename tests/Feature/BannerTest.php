@@ -1,13 +1,13 @@
 <?php
 
 use App\Filament\Resources\HeroBanners\Pages\CreateHeroBanner;
-use App\Filament\Resources\HeroBanners\Pages\EditHeroBanner;
 use App\Filament\Resources\HeroBanners\Pages\ListHeroBanners;
 use App\Filament\Resources\ProductBanners\Pages\CreateProductBanner;
-use App\Filament\Resources\ThirdBanners\Pages\CreateThirdBanner;
 use App\Filament\Resources\ResellerBanners\Pages\CreateResellerBanner;
+use App\Filament\Resources\ThirdBanners\Pages\CreateThirdBanner;
 use App\Models\Banner;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -17,8 +17,10 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
     Storage::fake('s3');
 });
@@ -179,7 +181,7 @@ it('allows start_date to be set while end_date remains null (indefinitely active
 
     $this->assertDatabaseHas('banners', [
         'title' => 'Indefinitely Scheduled Banner',
-        'start_date' => now()->addDays(5)->toDateString() . ' 00:00:00',
+        'start_date' => now()->addDays(5)->toDateString().' 00:00:00',
         'end_date' => null,
     ]);
 });
@@ -200,7 +202,7 @@ it('allows end_date to be set while start_date remains null (scheduled end only)
     $this->assertDatabaseHas('banners', [
         'title' => 'Scheduled End Only Banner',
         'start_date' => null,
-        'end_date' => now()->addDays(5)->toDateString() . ' 00:00:00',
+        'end_date' => now()->addDays(5)->toDateString().' 00:00:00',
     ]);
 });
 
