@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Administrator\Schemas;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Spatie\Permission\Models\Permission;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 class RoleForm
 {
@@ -16,7 +16,7 @@ class RoleForm
         $groups = [
             'Public' => ['Article', 'Testimony', 'Faq', 'Partner', 'SocialMedia', 'Contact'],
             'Listing' => ['Product', 'Category', 'Collection'],
-            'Homepage' => ['HeroBanner', 'ProductBanner', 'ThirdBanner'],
+            'Homepage' => ['HeroBanner', 'ProductBanner'],
             'Reseller' => ['Event', 'ResellerBanner'],
             'Administrator' => ['User', 'Role'],
         ];
@@ -24,7 +24,7 @@ class RoleForm
         $permissionSections = [];
 
         foreach ($groups as $groupName => $models) {
-            $permissionNames = collect($models)->flatMap(fn($m) => ["view {$m}", "manage {$m}"])->toArray();
+            $permissionNames = collect($models)->flatMap(fn ($m) => ["view {$m}", "manage {$m}"])->toArray();
 
             $permissionSections[] = Section::make($groupName)
                 ->schema([
@@ -35,11 +35,13 @@ class RoleForm
                                 ->sortBy(function ($permission) {
                                     $isView = str_starts_with($permission->name, 'view') ? 1 : 0;
                                     $modelName = explode(' ', $permission->name)[1] ?? '';
-                                    return $isView . '_' . $modelName;
+
+                                    return $isView.'_'.$modelName;
                                 })
                                 ->mapWithKeys(function ($permission) {
                                     $label = Str::headline(str_replace(' ', '_', $permission->name));
                                     $label = str_replace('Faq', 'QnA', $label);
+
                                     return [$permission->name => $label];
                                 })->toArray();
                         })

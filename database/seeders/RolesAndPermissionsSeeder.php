@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -15,9 +15,9 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $models = [
-            'Article', 'Testimony', 'Faq', 'HeroBanner', 'ProductBanner', 'ThirdBanner', 'ResellerBanner', 'Product', 
-            'Category', 'Event', 'Partner', 'User', 'Role', 
-            'Contact', 'SocialMedia', 'Collection'
+            'Article', 'Testimony', 'Faq', 'HeroBanner', 'ProductBanner', 'ResellerBanner', 'Product',
+            'Category', 'Event', 'Partner', 'User', 'Role',
+            'Contact', 'SocialMedia', 'Collection',
         ];
 
         // 3. Create view and manage permissions in the database
@@ -27,11 +27,11 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         // --- SIMPLIFIED PERMISSION HELPERS ---
-        
+
         // Helper to get ALL permissions for a model
-        $getFullAccess = fn($model) => [
+        $getFullAccess = fn ($model) => [
             "view {$model}",
-            "manage {$model}"
+            "manage {$model}",
         ];
 
         // 4. Create Roles
@@ -39,7 +39,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $writerRole = Role::findOrCreate('Writer');
 
         // 5. Assign Permissions
-        
+
         // Super Admin intentionally gets no permissions directly assigned because
         // it bypasses all checks via Gate::before in AppServiceProvider.
 

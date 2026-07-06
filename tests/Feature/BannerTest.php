@@ -4,7 +4,6 @@ use App\Filament\Resources\HeroBanners\Pages\CreateHeroBanner;
 use App\Filament\Resources\HeroBanners\Pages\ListHeroBanners;
 use App\Filament\Resources\ProductBanners\Pages\CreateProductBanner;
 use App\Filament\Resources\ResellerBanners\Pages\CreateResellerBanner;
-use App\Filament\Resources\ThirdBanners\Pages\CreateThirdBanner;
 use App\Models\Banner;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -104,24 +103,7 @@ it('scopes position sequences separately for each placement', function () {
         'position' => 1,
     ]);
 
-    // 3. Create a Third Banner (should get position 1)
-    Livewire::test(CreateThirdBanner::class)
-        ->fillForm([
-            'title' => 'Third Banner A',
-            'image' => UploadedFile::fake()->image('thirda.jpg'),
-            'type' => 'none',
-            'status' => 'active',
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $this->assertDatabaseHas('banners', [
-        'title' => 'Third Banner A',
-        'placement' => 'homepage--third',
-        'position' => 1,
-    ]);
-
-    // 4. Create a Reseller Banner (should get position 1)
+    // 3. Create a Reseller Banner (should get position 1)
     Livewire::test(CreateResellerBanner::class)
         ->fillForm([
             'title' => 'Reseller Banner A',
