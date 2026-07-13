@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,7 +17,7 @@ class ContactResource extends JsonResource
     {
         return [
             'company_name' => $this->company_name,
-            'telephone' => $this->telephone,
+            'telephone' => Phone::format($this->telephone),
             'email' => $this->email,
             'address' => $this->address,
         ];

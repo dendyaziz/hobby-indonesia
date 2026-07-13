@@ -24,7 +24,7 @@ test('it returns the first contact model as a resource if it exists', function (
         ->assertJson([
             'data' => [
                 'company_name' => 'Hobby Indonesia Test',
-                'telephone' => '021-99998888',
+                'telephone' => '622199998888',
                 'email' => 'test@hobbyindonesia.com',
                 'address' => 'Jakarta, ID',
             ],
