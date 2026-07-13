@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use Database\Factories\PartnerFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Partner extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\PartnerFactory> */
+    /** @use HasFactory<PartnerFactory> */
     use HasFactory, HasUuids;
+
     use InteractsWithMedia;
 
     protected $fillable = [
@@ -25,6 +28,14 @@ class Partner extends Model implements HasMedia
     {
         static::creating(function (Partner $partner) {
             $partner->position = (static::max('position') ?? 0) + 1;
+        });
+
+        static::saved(function (): void {
+            Cache::tags(['public'])->flush();
+        });
+
+        static::deleted(function (): void {
+            Cache::tags(['public'])->flush();
         });
     }
 

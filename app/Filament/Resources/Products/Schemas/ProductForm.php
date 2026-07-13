@@ -2,21 +2,20 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
-use Filament\Forms\Components\SpatieTagsInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\TextInput;
+use App\Models\Product;
 use Filament\Forms\Components\Radio;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\Category;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
-use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class ProductForm
@@ -80,6 +79,7 @@ class ProductForm
                                         if (blank($state)) {
                                             $set('discount_percentage', null);
                                             $set('discounted_price', null);
+
                                             return;
                                         }
 
@@ -104,6 +104,7 @@ class ProductForm
                                         $price = $get('price');
                                         if (blank($price) || blank($state)) {
                                             $set('discounted_price', null);
+
                                             return;
                                         }
                                         $set('discounted_price', (int) round($price * (1 - $state / 100)));
@@ -116,6 +117,7 @@ class ProductForm
                                         $price = $get('price');
                                         if (blank($price) || blank($state)) {
                                             $set('discount_percentage', null);
+
                                             return;
                                         }
                                         $set('discount_percentage', round((($price - $state) / $price) * 100, 2));
@@ -163,16 +165,18 @@ class ProductForm
                                     ->rules([
                                         fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                             $value = trim($value);
-                                            if (empty($value)) return;
+                                            if (empty($value)) {
+                                                return;
+                                            }
 
                                             // Matches standard watch URLs (with v parameter anywhere in query string),
                                             // embed/v/shorts paths, and short youtu.be links.
                                             $pattern = '/^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?(.*&)?v=|embed\/|v\/|shorts\/)|youtu\.be\/)[a-zA-Z0-9_\-]{11}([?&].*)?$/i';
 
-                                            if (!preg_match($pattern, $value)) {
+                                            if (! preg_match($pattern, $value)) {
                                                 $fail('The YouTube video URL is not valid.');
                                             }
-                                        }
+                                        },
                                     ]),
                             ]),
                     ])
@@ -198,9 +202,8 @@ class ProductForm
                                     ->relationship(
                                         name: 'categories',
                                         titleAttribute: 'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->with('parent')->sub()->latest(),
+                                        modifyQueryUsing: fn (Builder $query) => $query->latest(),
                                     )
-                                    ->getOptionLabelFromRecordUsing(fn (Category $record) => "{$record->parent?->name} → {$record->name}")
                                     ->multiple()
                                     ->searchable()
                                     ->preload()

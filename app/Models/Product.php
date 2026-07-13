@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -12,9 +13,20 @@ use Spatie\Tags\HasTags;
 
 class Product extends Model implements HasMedia
 {
+    use HasTags;
     use HasUuids;
     use InteractsWithMedia;
-    use HasTags;
+
+    protected static function booted(): void
+    {
+        static::saved(function (): void {
+            Cache::tags(['public'])->flush();
+        });
+
+        static::deleted(function (): void {
+            Cache::tags(['public'])->flush();
+        });
+    }
 
     protected $fillable = [
         'name',

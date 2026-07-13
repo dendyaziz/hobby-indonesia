@@ -1,0 +1,73 @@
+<?php
+
+use App\Models\Collection;
+use App\Models\CollectionItem;
+use App\Models\Product;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+
+uses(RefreshDatabase::class);
+
+test('it returns products inside a collection', function () {
+    $collection = Collection::factory()->create(['slug' => 'best-seller', 'title' => 'Best Seller']);
+
+    $product1 = Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+
+    $product2 = Product::create([
+        'name' => 'Game 2',
+        'slug' => 'game-2',
+        'availability' => 'Available',
+        'price' => 20000,
+        'description' => 'Description 2',
+    ]);
+
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product1->id,
+        'position' => 1,
+    ]);
+
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product2->id,
+        'position' => 2,
+    ]);
+
+    $this->getJson('/api/v1/collections/best-seller/products')
+        ->assertOk()
+        ->assertJsonCount(2, 'data')
+        ->assertJsonPath('data.0.name', 'Game 1')
+        ->assertJsonPath('data.1.name', 'Game 2');
+});
+
+test('it caches products list data and flushes cache when product changes', function () {
+    $collection = Collection::factory()->create(['slug' => 'best-seller', 'title' => 'Best Seller']);
+    $product = Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product->id,
+        'position' => 1,
+    ]);
+
+    $key = 'collection__products_best-seller';
+    expect(Cache::tags(['public'])->has($key))->toBeFalse();
+
+    $this->getJson('/api/v1/collections/best-seller/products')->assertOk();
+    expect(Cache::tags(['public'])->has($key))->toBeTrue();
+
+    // Updating product flushes public cache tags
+    $product->update(['name' => 'Updated Game']);
+    expect(Cache::tags(['public'])->has($key))->toBeFalse();
+});

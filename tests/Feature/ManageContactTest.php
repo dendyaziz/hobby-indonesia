@@ -3,6 +3,7 @@
 use App\Filament\Pages\ManageContact;
 use App\Models\Contact;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -10,8 +11,10 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
 });
 
@@ -47,7 +50,7 @@ it('validates maximum lengths', function () {
         ->fillForm([
             'company_name' => str_repeat('A', 51),
             'telephone' => str_repeat('1', 21),
-            'email' => str_repeat('a', 42) . '@test.com', // 51 chars total
+            'email' => str_repeat('a', 42).'@test.com', // 51 chars total
         ])
         ->call('save')
         ->assertHasFormErrors([

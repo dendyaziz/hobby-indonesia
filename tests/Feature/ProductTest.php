@@ -3,9 +3,10 @@
 use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\Category;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -15,15 +16,16 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
     Storage::fake('s3');
 
     $this->parentCategory = Category::factory()->create(['name' => 'Board Games']);
     $this->subCategory = Category::factory()->create([
         'name' => 'Strategy',
-        'parent_category_id' => $this->parentCategory->id,
     ]);
 });
 
@@ -261,7 +263,6 @@ it('synchronizes price, discount percentage, and discounted price in real-time',
 it('can edit and update a product and its categories', function () {
     $newSubCategory = Category::factory()->create([
         'name' => 'Card Games',
-        'parent_category_id' => $this->parentCategory->id,
     ]);
 
     $product = Product::create([
