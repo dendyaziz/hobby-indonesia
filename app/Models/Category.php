@@ -18,7 +18,6 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
-        'parent_category_id',
     ];
 
     /**
@@ -31,54 +30,6 @@ class Category extends Model
                 $category->slug = \Illuminate\Support\Str::slug($category->name);
             }
         });
-
-        static::deleting(function (Category $category) {
-            if ($category->subCategories()->exists()) {
-                \Filament\Notifications\Notification::make()
-                    ->warning()
-                    ->title('Cannot delete category')
-                    ->body("Category \"{$category->name}\" has subcategories and cannot be deleted.")
-                    ->send();
-
-                return false;
-            }
-        });
-    }
-
-    /**
-     * Get the parent category.
-     *
-     * @return BelongsTo<Category, $this>
-     */
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(Category::class, 'parent_category_id');
-    }
-
-    /**
-     * Get the subcategories.
-     *
-     * @return HasMany<Category, $this>
-     */
-    public function subCategories(): HasMany
-    {
-        return $this->hasMany(Category::class, 'parent_category_id');
-    }
-
-    /**
-     * Scope a query to only include parent categories.
-     */
-    public function scopeParent(Builder $query): Builder
-    {
-        return $query->whereNull('parent_category_id');
-    }
-
-    /**
-     * Scope a query to only include sub categories.
-     */
-    public function scopeSub(Builder $query): Builder
-    {
-        return $query->whereNotNull('parent_category_id');
     }
 
     /**

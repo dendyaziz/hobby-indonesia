@@ -15,8 +15,6 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
 
-use Illuminate\Database\Eloquent\Builder;
-
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
@@ -31,11 +29,6 @@ class CategoryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Categories';
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->parent();
-    }
-
     public static function form(Schema $schema): Schema
     {
         return CategoryForm::configure($schema);
@@ -49,7 +42,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\SubCategoriesRelationManager::class,
+            //
         ];
     }
 

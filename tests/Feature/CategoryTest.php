@@ -3,36 +3,29 @@
 use App\Filament\Resources\Categories\Pages\CreateCategory;
 use App\Filament\Resources\Categories\Pages\EditCategory;
 use App\Filament\Resources\Categories\Pages\ListCategories;
-use App\Filament\Resources\Categories\RelationManagers\SubCategoriesRelationManager;
 use App\Models\Category;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\Testing\TestAction;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
     $user->assignRole('Super Admin');
     $this->actingAs($user);
 });
 
-it('can load the category index page and displays only parents', function () {
-    $parent = Category::factory()->create(['name' => 'Parent Category']);
-    $sub = Category::factory()->create([
-        'name' => 'Sub Category',
-        'parent_category_id' => $parent->id,
-    ]);
+it('can load the category index page and displays categories', function () {
+    $category = Category::factory()->create(['name' => 'Main Category']);
 
     Livewire::test(ListCategories::class)
         ->assertOk()
-        ->assertCanSeeTableRecords([$parent])
-        ->assertCanNotSeeTableRecords([$sub]);
+        ->assertCanSeeTableRecords([$category]);
 });
 
 it('can load the category create page', function () {
@@ -40,7 +33,7 @@ it('can load the category create page', function () {
         ->assertOk();
 });
 
-it('can create a parent category', function () {
+it('can create a category', function () {
     Livewire::test(CreateCategory::class)
         ->fillForm([
             'name' => 'Games',
@@ -50,7 +43,6 @@ it('can create a parent category', function () {
 
     $this->assertDatabaseHas('categories', [
         'name' => 'Games',
-        'parent_category_id' => null,
     ]);
 });
 
@@ -64,11 +56,11 @@ it('enforces validation on category name', function () {
         ->assertHasFormErrors(['name' => 'max']);
 });
 
-it('can edit a parent category name', function () {
-    $parent = Category::factory()->create(['name' => 'Old Name']);
+it('can edit a category name', function () {
+    $category = Category::factory()->create(['name' => 'Old Name']);
 
     Livewire::test(EditCategory::class, [
-        'record' => $parent->getKey(),
+        'record' => $category->getKey(),
     ])
         ->fillForm([
             'name' => 'New Name',
@@ -76,107 +68,17 @@ it('can edit a parent category name', function () {
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($parent->refresh()->name)->toBe('New Name');
-});
-
-it('can render and manage subcategories using modals from the relation manager', function () {
-    $parent = Category::factory()->create(['name' => 'Main Category']);
-
-    // 1. Render and Create Subcategory via table create action
-    Livewire::test(SubCategoriesRelationManager::class, [
-        'ownerRecord' => $parent,
-        'pageClass' => EditCategory::class,
-    ])
-        ->assertOk()
-        ->callAction(TestAction::make('create')->table(), [
-            'name' => 'First Sub',
-        ])
-        ->assertHasNoTableActionErrors();
-
-    $this->assertDatabaseHas('categories', [
-        'name' => 'First Sub',
-        'parent_category_id' => $parent->id,
-    ]);
-
-    $sub = Category::where('name', 'First Sub')->first();
-    expect($sub->parent_category_id)->toBe($parent->id);
-
-    // 2. Edit the Subcategory
-    Livewire::test(SubCategoriesRelationManager::class, [
-        'ownerRecord' => $parent,
-        'pageClass' => EditCategory::class,
-    ])
-        ->callAction(TestAction::make('edit')->table($sub), [
-            'name' => 'Updated Sub',
-        ])
-        ->assertHasNoTableActionErrors();
-
-    $this->assertDatabaseHas('categories', [
-        'id' => $sub->id,
-        'name' => 'Updated Sub',
-    ]);
-
-    // 3. Delete the Subcategory
-    Livewire::test(SubCategoriesRelationManager::class, [
-        'ownerRecord' => $parent,
-        'pageClass' => EditCategory::class,
-    ])
-        ->callAction(TestAction::make(DeleteAction::class)->table($sub))
-        ->assertHasNoTableActionErrors();
-
-    $this->assertDatabaseMissing('categories', [
-        'id' => $sub->id,
-    ]);
-});
-
-it('restricts deleting a parent category that has subcategories', function () {
-    $parent = Category::factory()->create(['name' => 'Parent Category']);
-    $sub = Category::factory()->create([
-        'name' => 'Sub Category',
-        'parent_category_id' => $parent->id,
-    ]);
-
-    $deleted = $parent->delete();
-
-    expect($deleted)->toBeFalse();
-    $this->assertDatabaseHas('categories', [
-        'id' => $parent->id,
-    ]);
+    expect($category->refresh()->name)->toBe('New Name');
 });
 
 it('enforces uniqueness on category name', function () {
     Category::factory()->create(['name' => 'Strategy']);
 
-    // Attempting to create parent category with duplicate name 'Strategy' should fail
+    // Attempting to create category with duplicate name 'Strategy' should fail
     Livewire::test(CreateCategory::class)
         ->fillForm([
             'name' => 'Strategy',
         ])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
-});
-
-it('enforces uniqueness on subcategory name even if parent has that name', function () {
-    $parent = Category::factory()->create(['name' => 'Strategy']);
-    Category::factory()->create(['name' => 'Roleplay']);
-
-    // Attempting to create subcategory with duplicate name 'Roleplay' should fail
-    Livewire::test(SubCategoriesRelationManager::class, [
-        'ownerRecord' => $parent,
-        'pageClass' => EditCategory::class,
-    ])
-        ->callAction(TestAction::make('create')->table(), [
-            'name' => 'Roleplay',
-        ])
-        ->assertHasTableActionErrors(['name' => 'unique']);
-        
-    // Attempting to create subcategory with duplicate name 'Strategy' (same as parent) should fail
-    Livewire::test(SubCategoriesRelationManager::class, [
-        'ownerRecord' => $parent,
-        'pageClass' => EditCategory::class,
-    ])
-        ->callAction(TestAction::make('create')->table(), [
-            'name' => 'Strategy',
-        ])
-        ->assertHasTableActionErrors(['name' => 'unique']);
 });

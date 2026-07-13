@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Category>
@@ -18,10 +19,10 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         $name = substr($this->faker->unique()->words(2, true), 0, 30);
+
         return [
             'name' => $name,
-            'slug' => \Illuminate\Support\Str::slug($name),
-            'parent_category_id' => null,
+            'slug' => Str::slug($name),
         ];
     }
 }
