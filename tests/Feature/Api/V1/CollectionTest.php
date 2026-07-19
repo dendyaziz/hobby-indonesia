@@ -71,3 +71,30 @@ test('it caches products list data and flushes cache when product changes', func
     $product->update(['name' => 'Updated Game']);
     expect(Cache::tags(['public'])->has($key))->toBeFalse();
 });
+
+test('it flushes the collection products cache when collection membership changes', function () {
+    $collection = Collection::factory()->create(['slug' => 'best-seller', 'title' => 'Best Seller']);
+    $product = Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+    $item = CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product->id,
+        'position' => 1,
+    ]);
+
+    $key = 'collection__products_best-seller';
+    $this->getJson('/api/v1/collections/best-seller/products')->assertOk();
+    expect(Cache::tags(['public'])->has($key))->toBeTrue();
+
+    $item->update(['position' => 2]);
+    expect(Cache::tags(['public'])->has($key))->toBeFalse();
+
+    $this->getJson('/api/v1/collections/best-seller/products')->assertOk();
+    $item->delete();
+    expect(Cache::tags(['public'])->has($key))->toBeFalse();
+});
