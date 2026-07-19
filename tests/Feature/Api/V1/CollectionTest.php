@@ -4,7 +4,9 @@ use App\Models\Collection;
 use App\Models\CollectionItem;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -44,6 +46,33 @@ test('it returns products inside a collection', function () {
         ->assertJsonCount(2, 'data')
         ->assertJsonPath('data.0.name', 'Game 1')
         ->assertJsonPath('data.1.name', 'Game 2');
+});
+
+test('it returns all product images inside a collection', function () {
+    Storage::fake('public');
+
+    $collection = Collection::factory()->create(['slug' => 'best-seller', 'title' => 'Best Seller']);
+    $product = Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+
+    $product->addMedia(UploadedFile::fake()->image('game-1.jpg'))->toMediaCollection('product-images');
+    $product->addMedia(UploadedFile::fake()->image('game-1-detail.jpg'))->toMediaCollection('product-images');
+
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product->id,
+        'position' => 1,
+    ]);
+
+    $this->getJson('/api/v1/collections/best-seller/products')
+        ->assertOk()
+        ->assertJsonCount(2, 'data.0.image_urls')
+        ->assertJsonMissingPath('data.0.image_url');
 });
 
 test('it caches products list data and flushes cache when product changes', function () {

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductResource extends JsonResource
 {
@@ -25,7 +26,10 @@ class ProductResource extends JsonResource
             'min_player' => $this->min_player,
             'max_player' => $this->max_player,
             'playing_duration' => $this->playing_duration,
-            'image_url' => $this->getFirstMediaUrl('product-images'),
+            'image_urls' => $this->getMedia('product-images')
+                ->map(fn (Media $media): string => $media->getUrl())
+                ->values()
+                ->all(),
         ];
     }
 }
