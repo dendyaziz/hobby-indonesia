@@ -6,6 +6,8 @@ use App\Filament\Resources\Articles\Pages\ListArticles;
 use App\Models\Article;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -46,6 +48,19 @@ it('can create an article and save to database', function () {
     $article = Article::where('title', 'My New Hobby Article')->first();
     expect($article)->not->toBeNull();
     expect($article->hasMedia('featured_images'))->toBeTrue();
+    expect($article->read_duration)->toBe(1);
+});
+
+it('calculates reading duration from the article word count', function () {
+    $article = Article::factory()->create([
+        'content' => '<h2>Heading</h2><p>'.str_repeat('word ', 401).'</p>',
+    ]);
+
+    expect($article->read_duration)->toBe(3);
+
+    $article->update(['content' => '<p>'.str_repeat('word ', 200).'</p>']);
+
+    expect($article->fresh()->read_duration)->toBe(1);
 });
 
 it('validates required and maximum length constraints for title', function () {
@@ -102,30 +117,30 @@ it('can edit and update an article', function () {
 it('has correct content rich editor configuration', function () {
     $component = Livewire::test(CreateArticle::class);
     $schema = $component->instance()->getSchema('form');
-    
+
     $contentField = collect($schema->getComponents())
         ->first(fn ($component) => $component->getName() === 'content');
 
-    /** @var \Filament\Forms\Components\RichEditor $contentField */
+    /** @var RichEditor $contentField */
     expect($contentField)->not->toBeNull();
-    expect($contentField)->toBeInstanceOf(\Filament\Forms\Components\RichEditor::class);
-    
+    expect($contentField)->toBeInstanceOf(RichEditor::class);
+
     // Check directory, max size, and visibility
     expect($contentField->getFileAttachmentsDirectory())->toBe('public/articles/attachments');
     expect($contentField->getFileAttachmentsMaxSize())->toBe(2048);
     expect($contentField->getFileAttachmentsVisibility())->toBe('public');
-    
+
     // Check resizable images and tampering prevention
     expect($contentField->hasResizableImages())->toBeTrue();
     expect($contentField->shouldPreventFileAttachmentPathTampering())->toBeTrue();
-    
+
     // Check toolbar buttons has attachFiles
     $toolbarButtons = $contentField->getToolbarButtons();
     $flattenedButtons = [];
     foreach ($toolbarButtons as $button) {
         if (is_array($button)) {
             // Some buttons are nested in groups, some are simple strings, some are ToolbarButtonGroup instances
-            if ($button instanceof \Filament\Forms\Components\RichEditor\ToolbarButtonGroup) {
+            if ($button instanceof ToolbarButtonGroup) {
                 $flattenedButtons = array_merge($flattenedButtons, $button->getButtons());
             } else {
                 $flattenedButtons = array_merge($flattenedButtons, $button);
