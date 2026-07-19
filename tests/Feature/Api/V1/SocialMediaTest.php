@@ -15,6 +15,7 @@ test('it returns the first social media model as a resource if it exists', funct
     $socialMedia = SocialMedia::factory()->create([
         'facebook' => 'https://facebook.com/hobbyindonesia',
         'instagram' => 'https://instagram.com/hobbyindonesia',
+        'tiktok' => 'https://www.tiktok.com/@hobbyindonesia.id',
         'youtube' => 'https://youtube.com/hobbyindonesia',
         'x' => 'https://x.com/hobbyindonesia',
     ]);
@@ -25,6 +26,7 @@ test('it returns the first social media model as a resource if it exists', funct
             'data' => [
                 'facebook' => 'https://facebook.com/hobbyindonesia',
                 'instagram' => 'https://instagram.com/hobbyindonesia',
+                'tiktok' => 'https://www.tiktok.com/@hobbyindonesia.id',
                 'youtube' => 'https://youtube.com/hobbyindonesia',
                 'x' => 'https://x.com/hobbyindonesia',
             ],

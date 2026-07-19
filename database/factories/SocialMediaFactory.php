@@ -20,6 +20,7 @@ class SocialMediaFactory extends Factory
         return [
             'facebook' => 'https://facebook.com/'.$this->faker->userName(),
             'instagram' => 'https://instagram.com/'.$this->faker->userName(),
+            'tiktok' => 'https://www.tiktok.com/@'.$this->faker->userName(),
             'youtube' => 'https://youtube.com/'.$this->faker->userName(),
             'x' => 'https://x.com/'.$this->faker->userName(),
         ];

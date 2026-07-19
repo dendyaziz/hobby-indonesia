@@ -17,6 +17,7 @@ class SocialMediaResource extends JsonResource
         return [
             'facebook' => $this->facebook,
             'instagram' => $this->instagram,
+            'tiktok' => $this->tiktok,
             'youtube' => $this->youtube,
             'x' => $this->x,
         ];

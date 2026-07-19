@@ -18,6 +18,7 @@ class SocialMedia extends Model
     protected $fillable = [
         'facebook',
         'instagram',
+        'tiktok',
         'youtube',
         'x',
     ];

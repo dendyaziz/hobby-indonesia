@@ -27,6 +27,7 @@ it('can save valid social media handles and URLs', function () {
         ->fillForm([
             'facebook' => 'john.doe.123',
             'instagram' => '@johndoe',
+            'tiktok' => '@johndoe',
             'youtube' => 'UCabcdefghijklmnopqrstuvw',
             'x' => 'johndoe_1',
         ])
@@ -45,6 +46,7 @@ it('can save valid social media handles and URLs', function () {
         ->fillForm([
             'facebook' => 'https://facebook.com/myaccount',
             'instagram' => 'https://www.instagram.com/myaccount',
+            'tiktok' => 'https://www.tiktok.com/@myaccount',
             'youtube' => 'https://youtube.com/@mychannel',
             'x' => 'https://twitter.com/myaccount',
         ])
@@ -58,6 +60,23 @@ it('can save valid social media handles and URLs', function () {
         'youtube' => 'https://youtube.com/@mychannel',
         'x' => 'https://twitter.com/myaccount',
     ]);
+});
+
+it('fails validation on invalid tiktok inputs', function () {
+    Livewire::test(ManageSocialMedia::class)
+        ->fillForm(['tiktok' => '@a'])
+        ->call('save')
+        ->assertHasFormErrors(['tiktok']);
+
+    Livewire::test(ManageSocialMedia::class)
+        ->fillForm(['tiktok' => 'johndoe'])
+        ->call('save')
+        ->assertHasFormErrors(['tiktok']);
+
+    Livewire::test(ManageSocialMedia::class)
+        ->fillForm(['tiktok' => 'https://tiktok.com/'])
+        ->call('save')
+        ->assertHasFormErrors(['tiktok']);
 });
 
 it('fails validation on invalid facebook inputs', function () {
