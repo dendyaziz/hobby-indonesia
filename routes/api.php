@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\ArticleController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CollectionController;
 use App\Http\Controllers\Api\V1\ContactController;
@@ -21,4 +22,6 @@ Route::prefix('v1')->group(function (): void {
     Route::get('reseller-banners', [ResellerBannerController::class, 'index']);
     Route::get('testimonies', [TestimonyController::class, 'index']);
     Route::get('partners', [PartnerController::class, 'index']);
+    Route::get('articles', [ArticleController::class, 'index']);
+    Route::get('articles/{article:slug}', [ArticleController::class, 'show']);
 });
