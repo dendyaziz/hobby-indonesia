@@ -17,6 +17,7 @@ class CategoryController extends Controller
     {
         $data = Cache::tags(['public'])->remember('category__list', now()->addDays(30), function () {
             $categories = Category::query()
+                ->withCount('products')
                 ->orderBy('name', 'asc')
                 ->get();
 
