@@ -17,6 +17,7 @@ class ArticleResource extends JsonResource
         return [
             'slug' => $this->slug,
             'title' => $this->title,
+            'published_at' => $this->created_at?->toDateString(),
             'content' => $this->content,
             'read_duration' => $this->read_duration,
             'image_url' => $this->getFirstMediaUrl('featured_images'),

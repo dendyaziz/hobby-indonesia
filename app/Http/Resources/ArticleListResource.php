@@ -18,6 +18,7 @@ class ArticleListResource extends JsonResource
         return [
             'slug' => $this->slug,
             'title' => $this->title,
+            'published_at' => $this->created_at?->toDateString(),
             'excerpt' => Str::of(strip_tags((string) $this->content))->squish()->limit(160)->toString(),
             'read_duration' => $this->read_duration,
             'image_url' => $this->getFirstMediaUrl('featured_images'),

@@ -19,6 +19,7 @@ test('it returns only published articles without content in the list', function 
         ->assertSuccessful()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.slug', $published->slug)
+        ->assertJsonPath('data.0.published_at', $published->created_at->toDateString())
         ->assertJsonPath('data.0.read_duration', 1)
         ->assertJsonMissingPath('data.0.content')
         ->assertJsonMissing(['id', 'created_at', 'updated_at']);
@@ -72,6 +73,7 @@ test('it returns a published article by slug', function () {
     $this->getJson('/api/v1/articles/published-article')
         ->assertSuccessful()
         ->assertJsonPath('data.slug', 'published-article')
+        ->assertJsonPath('data.published_at', Article::where('slug', 'published-article')->firstOrFail()->created_at->toDateString())
         ->assertJsonPath('data.content', '<p>Published content.</p>')
         ->assertJsonPath('data.read_duration', 1)
         ->assertJsonMissing(['id', 'created_at', 'updated_at']);
