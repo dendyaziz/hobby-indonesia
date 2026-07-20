@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\HeroBannerController;
 use App\Http\Controllers\Api\V1\PartnerController;
 use App\Http\Controllers\Api\V1\ProductBannerController;
+use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ResellerBannerController;
 use App\Http\Controllers\Api\V1\SocialMediaController;
 use App\Http\Controllers\Api\V1\TestimonyController;
@@ -19,6 +20,7 @@ Route::prefix('v1')->group(function (): void {
     Route::get('social-media', [SocialMediaController::class, 'show']);
     Route::get('collections/{collection:slug}/products', [CollectionController::class, 'products']);
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('products', [ProductController::class, 'index']);
     Route::get('reseller-banners', [ResellerBannerController::class, 'index']);
     Route::get('testimonies', [TestimonyController::class, 'index']);
     Route::get('partners', [PartnerController::class, 'index']);
