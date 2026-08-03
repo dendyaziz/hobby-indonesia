@@ -45,8 +45,16 @@ class Product extends Model implements HasMedia
         'max_player',
         'playing_duration',
         'youtube',
+        'tiktok_videos',
         'description',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'tiktok_videos' => 'array',
+        ];
+    }
 
     public function registerMediaCollections(): void
     {

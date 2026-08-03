@@ -210,3 +210,70 @@ test('it caches products list data and flushes cache when product changes', func
     $product->update(['name' => 'Updated Game A']);
     expect(Cache::tags(['public'])->has($key))->toBeFalse();
 });
+
+test('it returns single product detail by slug', function () {
+    $category = Category::factory()->create(['name' => 'Strategy', 'slug' => 'strategy']);
+    $product = Product::create([
+        'name' => 'Brass: Birmingham',
+        'slug' => 'brass-birmingham',
+        'availability' => 'Available',
+        'price' => 750000,
+        'description' => 'Great strategic game',
+        'youtube' => 'https://youtube.com/test',
+        'brand' => 'Amigo',
+        'manufacture_country' => 'Germany',
+        'publisher' => 'Publisher X',
+        'designer' => 'Designer Y',
+        'artist' => 'Artist Z',
+    ]);
+    $product->categories()->attach($category);
+
+    $this->getJson('/api/v1/products/brass-birmingham')
+        ->assertOk()
+        ->assertJson([
+            'data' => [
+                'name' => 'Brass: Birmingham',
+                'slug' => 'brass-birmingham',
+                'availability' => 'Available',
+                'price' => 750000,
+                'description' => 'Great strategic game',
+                'youtube' => 'https://youtube.com/test',
+                'brand' => 'Amigo',
+                'manufacture_country' => 'Germany',
+                'publisher' => 'Publisher X',
+                'designer' => 'Designer Y',
+                'artist' => 'Artist Z',
+                'categories' => [
+                    [
+                        'name' => 'Strategy',
+                        'slug' => 'strategy',
+                    ],
+                ],
+            ],
+        ]);
+});
+
+test('it returns 404 when product slug not found', function () {
+    $this->getJson('/api/v1/products/non-existent')
+        ->assertStatus(404);
+});
+
+test('it caches product detail and flushes cache when product changes', function () {
+    $product = Product::create([
+        'name' => 'Brass: Birmingham',
+        'slug' => 'brass-birmingham',
+        'availability' => 'Available',
+        'price' => 750000,
+        'description' => 'Great strategic game',
+    ]);
+
+    $key = 'product__detail_brass-birmingham';
+
+    expect(Cache::tags(['public'])->has($key))->toBeFalse();
+
+    $this->getJson('/api/v1/products/brass-birmingham')->assertOk();
+    expect(Cache::tags(['public'])->has($key))->toBeTrue();
+
+    $product->update(['name' => 'Updated Brass']);
+    expect(Cache::tags(['public'])->has($key))->toBeFalse();
+});

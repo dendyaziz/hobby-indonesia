@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Models\Product;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
@@ -156,7 +157,7 @@ class ProductForm
                             ])
                             ->columns(2),
 
-                        Section::make('Video Attachment')
+                        Section::make('Video Attachments')
                             ->schema([
                                 TextInput::make('youtube')
                                     ->label('YouTube Video URL')
@@ -178,6 +179,30 @@ class ProductForm
                                             }
                                         },
                                     ]),
+                                Repeater::make('tiktok_videos')
+                                    ->label('TikTok Video URLs')
+                                    ->simple(
+                                        TextInput::make('url')
+                                            ->label('TikTok Video URL')
+                                            ->placeholder('https://www.tiktok.com/@username/video/...')
+                                            ->rules([
+                                                fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                                    $value = trim($value);
+                                                    if (empty($value)) {
+                                                        return;
+                                                    }
+
+                                                    $pattern = '/^(https?:\/\/)?((www|vm|vt)\.)?tiktok\.com\/[a-zA-Z0-9_@\-\/]+([?&].*)?$/i';
+
+                                                    if (! preg_match($pattern, $value)) {
+                                                        $fail('The TikTok video URL is not valid.');
+                                                    }
+                                                },
+                                            ])
+                                    )
+                                    ->addActionLabel('Add TikTok Video URL')
+                                    ->default([])
+                                    ->nullable(),
                             ]),
                     ])
                     ->columnSpan(['lg' => 2]),

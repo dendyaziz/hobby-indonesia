@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('social_medias', function (Blueprint $table): void {
-            $table->string('tiktok', 100)->nullable()->after('instagram');
-        });
+        if (! Schema::hasColumn('social_medias', 'tiktok')) {
+            Schema::table('social_medias', function (Blueprint $table): void {
+                $table->string('tiktok', 100)->nullable()->after('instagram');
+            });
+        }
     }
 
     public function down(): void

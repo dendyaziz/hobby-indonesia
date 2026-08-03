@@ -106,4 +106,22 @@ class ProductController extends Controller
 
         return response()->json($data);
     }
+
+    /**
+     * Display the specified product by its slug.
+     */
+    public function show(string $slug): JsonResponse
+    {
+        $data = Cache::tags(['public'])->remember("product__detail_{$slug}", now()->addDays(30), function () use ($slug) {
+            $product = Product::where('slug', $slug)
+                ->with(['media', 'categories'])
+                ->firstOrFail();
+
+            return (new ProductResource($product))->resolve();
+        });
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
 }

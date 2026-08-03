@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Repeater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -52,6 +53,10 @@ it('can create a product and save to database', function () {
             'max_player' => 4,
             'playing_duration' => 60,
             'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'tiktok_videos' => [
+                ['url' => 'https://www.tiktok.com/@username/video/7391234567890123456'],
+                ['url' => 'https://vt.tiktok.com/ZS23456/'],
+            ],
             'description' => '<p>This is a super fun game for the whole family.</p>',
             'images' => [
                 UploadedFile::fake()->image('product1.jpg'),
@@ -88,6 +93,10 @@ it('can create a product and save to database', function () {
     expect($product->categories)->toHaveCount(1);
     expect($product->categories->first()->id)->toBe($this->subCategory->id);
     expect($product->tags->pluck('name')->toArray())->toContain('Strategy', 'Board Game');
+    expect($product->tiktok_videos)->toBe([
+        'https://www.tiktok.com/@username/video/7391234567890123456',
+        'https://vt.tiktok.com/ZS23456/',
+    ]);
 });
 
 it('validates required fields', function () {
@@ -230,6 +239,41 @@ it('validates youtube validation rules', function () {
         ])
         ->call('create')
         ->assertHasNoFormErrors();
+});
+
+it('validates tiktok_videos validation rules', function () {
+    $undoRepeaterFake = Repeater::fake();
+
+    // Invalid TikTok URL (e.g. non-tiktok URL)
+    Livewire::test(CreateProduct::class)
+        ->fillForm([
+            'tiktok_videos' => [
+                ['url' => 'https://facebook.com/video/123'],
+            ],
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['tiktok_videos.0.url']);
+
+    // Valid TikTok URLs
+    Livewire::test(CreateProduct::class)
+        ->fillForm([
+            'name' => 'Board Game',
+            'availability' => 'Available',
+            'price' => 100000,
+            'description' => 'Cool game',
+            'tiktok_videos' => [
+                ['url' => 'https://www.tiktok.com/@user/video/1234567890'],
+                ['url' => 'https://vt.tiktok.com/ZS23456/'],
+            ],
+            'images' => [
+                UploadedFile::fake()->image('product_test.jpg'),
+            ],
+            'categories' => [$this->subCategory->id],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
 });
 
 it('synchronizes price, discount percentage, and discounted price in real-time', function () {

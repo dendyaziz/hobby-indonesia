@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function (): void {
     Route::get('collections/{collection:slug}/products', [CollectionController::class, 'products']);
     Route::get('categories', [CategoryController::class, 'index']);
     Route::get('products', [ProductController::class, 'index']);
+    Route::get('products/{slug}', [ProductController::class, 'show']);
     Route::get('reseller-banners', [ResellerBannerController::class, 'index']);
     Route::get('testimonies', [TestimonyController::class, 'index']);
     Route::get('partners', [PartnerController::class, 'index']);

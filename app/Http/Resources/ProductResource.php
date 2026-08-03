@@ -26,6 +26,19 @@ class ProductResource extends JsonResource
             'min_player' => $this->min_player,
             'max_player' => $this->max_player,
             'playing_duration' => $this->playing_duration,
+            'description' => $this->description,
+            'youtube' => $this->youtube,
+            'tiktok_videos' => $this->tiktok_videos ?? [],
+            'brand' => $this->brand,
+            'manufacture_country' => $this->manufacture_country,
+            'publisher' => $this->publisher,
+            'designer' => $this->designer,
+            'artist' => $this->artist,
+            'difficulty' => $this->difficulty,
+            'themes' => $this->themes ?? [],
+            'categories' => $this->relationLoaded('categories')
+                ? CategoryResource::collection($this->categories)->resolve()
+                : $this->whenLoaded('categories'),
             'image_urls' => $this->getMedia('product-images')
                 ->map(fn (Media $media): string => $media->getUrl())
                 ->values()
