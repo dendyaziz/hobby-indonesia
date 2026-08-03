@@ -7,10 +7,11 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Table;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\SpatieTagsColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class ProductsTable
 {
@@ -37,13 +38,25 @@ class ProductsTable
                     ->sortable(),
                 TextColumn::make('availability')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => \Illuminate\Support\Str::headline($state))
+                    ->formatStateUsing(fn (string $state): string => Str::headline($state))
                     ->color(fn (string $state): string => match ($state) {
                         'Available', 'available' => 'success',
                         'Out of stock', 'out of stock' => 'danger',
                         'Pre-order', 'pre-order' => 'warning',
                         default => 'gray',
                     }),
+                TextColumn::make('difficulty')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Easy', 'easy' => 'success',
+                        'Medium', 'medium' => 'warning',
+                        'Hard', 'hard' => 'danger',
+                        default => 'gray',
+                    })
+                    ->sortable(),
+                TextColumn::make('themes')
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('categories.name')
                     ->label('Categories')
                     ->badge()

@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ResellerBannerController;
 use App\Http\Controllers\Api\V1\SocialMediaController;
 use App\Http\Controllers\Api\V1\TestimonyController;
+use App\Http\Controllers\Api\V1\ThemeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -20,6 +21,7 @@ Route::prefix('v1')->group(function (): void {
     Route::get('social-media', [SocialMediaController::class, 'show']);
     Route::get('collections/{collection:slug}/products', [CollectionController::class, 'products']);
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('themes', [ThemeController::class, 'index']);
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{slug}', [ProductController::class, 'show']);
     Route::get('reseller-banners', [ResellerBannerController::class, 'index']);

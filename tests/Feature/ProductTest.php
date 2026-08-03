@@ -58,6 +58,8 @@ it('can create a product and save to database', function () {
                 ['url' => 'https://vt.tiktok.com/ZS23456/'],
             ],
             'description' => '<p>This is a super fun game for the whole family.</p>',
+            'difficulty' => 'Easy',
+            'themes' => ['Abstract', 'Animals'],
             'images' => [
                 UploadedFile::fake()->image('product1.jpg'),
                 UploadedFile::fake()->image('product2.jpg'),
@@ -86,6 +88,8 @@ it('can create a product and save to database', function () {
         'playing_duration' => 60,
         'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         'description' => '<p>This is a super fun game for the whole family.</p>',
+        'difficulty' => 'Easy',
+        'themes' => json_encode(['Abstract', 'Animals']),
     ]);
 
     $product = Product::first();
@@ -106,6 +110,8 @@ it('validates required fields', function () {
             'availability' => '',
             'price' => null,
             'description' => '',
+            'difficulty' => '',
+            'themes' => [],
             'images' => [],
             'categories' => [],
         ])
@@ -115,6 +121,8 @@ it('validates required fields', function () {
             'availability' => 'required',
             'price' => 'required',
             'description',
+            'difficulty' => 'required',
+            'themes' => 'required',
             'images' => 'required',
             'categories' => 'required',
         ]);
@@ -199,6 +207,8 @@ it('validates youtube validation rules', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => 'Cool game',
+            'difficulty' => 'Easy',
+            'themes' => ['Abstract'],
             'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'images' => [
                 UploadedFile::fake()->image('product_test.jpg'),
@@ -215,6 +225,8 @@ it('validates youtube validation rules', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => 'Cool game 2',
+            'difficulty' => 'Easy',
+            'themes' => ['Abstract'],
             'youtube' => 'https://youtu.be/dQw4w9WgXcQ?t=10',
             'images' => [
                 UploadedFile::fake()->image('product_test2.jpg'),
@@ -231,6 +243,8 @@ it('validates youtube validation rules', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => 'Cool game 3',
+            'difficulty' => 'Easy',
+            'themes' => ['Abstract'],
             'youtube' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
             'images' => [
                 UploadedFile::fake()->image('product_test3.jpg'),
@@ -261,6 +275,8 @@ it('validates tiktok_videos validation rules', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => 'Cool game',
+            'difficulty' => 'Easy',
+            'themes' => ['Abstract'],
             'tiktok_videos' => [
                 ['url' => 'https://www.tiktok.com/@user/video/1234567890'],
                 ['url' => 'https://vt.tiktok.com/ZS23456/'],
@@ -315,6 +331,8 @@ it('can edit and update a product and its categories', function () {
         'availability' => 'Available',
         'price' => 100000,
         'description' => '<p>Original description</p>',
+        'difficulty' => 'Easy',
+        'themes' => ['Abstract'],
     ]);
     $product->categories()->attach($this->subCategory);
     $product->attachTags(['OldTag1', 'OldTag2']);
@@ -327,6 +345,8 @@ it('can edit and update a product and its categories', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => '<p>Original description</p>',
+            'difficulty' => 'Easy',
+            'themes' => ['Abstract'],
             'tags' => ['OldTag1', 'OldTag2'],
         ])
         ->fillForm([
@@ -334,6 +354,8 @@ it('can edit and update a product and its categories', function () {
             'availability' => 'Available',
             'price' => 120000,
             'description' => '<p>Updated description</p>',
+            'difficulty' => 'Medium',
+            'themes' => ['Animals'],
             'images' => [
                 UploadedFile::fake()->image('updated1.jpg'),
             ],
@@ -347,6 +369,8 @@ it('can edit and update a product and its categories', function () {
         'id' => $product->id,
         'name' => 'Updated Name',
         'price' => 120000,
+        'difficulty' => 'Medium',
+        'themes' => json_encode(['Animals']),
     ]);
 
     $product->refresh();
@@ -362,6 +386,7 @@ it('validates unique constraint for slug', function () {
         'availability' => 'Available',
         'price' => 100000,
         'description' => 'Description',
+        'difficulty' => 'Easy',
     ]);
 
     Livewire::test(CreateProduct::class)
@@ -370,6 +395,7 @@ it('validates unique constraint for slug', function () {
             'availability' => 'Available',
             'price' => 100000,
             'description' => 'Description',
+            'difficulty' => 'Easy',
             'images' => [
                 UploadedFile::fake()->image('product.jpg'),
             ],

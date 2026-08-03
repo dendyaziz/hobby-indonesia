@@ -21,12 +21,17 @@ class ProductController extends Controller
 
         $filters = $request->only([
             'categories',
+            'themes',
+            'difficulty',
             'min_age',
             'playing_time_from',
             'playing_time_to',
             'total_player_from',
             'total_player_to',
+            'price_from',
+            'price_to',
             'sort',
+            'search',
         ]);
 
         // Normalize filters to ensure stable cache keys
@@ -36,6 +41,12 @@ class ProductController extends Controller
 
         $data = Cache::tags(['public'])->remember($key, now()->addDays(30), function () use ($limit, $page, $filters): array {
             $query = Product::query()->with('media');
+
+            // Search filter (name LIKE %term%)
+            if (! empty($filters['search'])) {
+                $term = $filters['search'];
+                $query->where('name', 'LIKE', "%{$term}%");
+            }
 
             // Category filter
             if (! empty($filters['categories'])) {
@@ -47,6 +58,32 @@ class ProductController extends Controller
                     $query->whereHas('categories', function ($q) use ($categories) {
                         $q->whereIn('slug', $categories);
                     });
+                }
+            }
+
+            // Themes filter
+            if (! empty($filters['themes'])) {
+                $themes = $filters['themes'];
+                if (is_string($themes)) {
+                    $themes = array_filter(explode(',', $themes));
+                }
+                if (! empty($themes)) {
+                    $query->where(function ($q) use ($themes) {
+                        foreach ($themes as $theme) {
+                            $q->orWhereJsonContains('themes', $theme);
+                        }
+                    });
+                }
+            }
+
+            // Difficulty filter
+            if (! empty($filters['difficulty'])) {
+                $difficulty = $filters['difficulty'];
+                if (is_string($difficulty)) {
+                    $difficulty = array_filter(explode(',', $difficulty));
+                }
+                if (! empty($difficulty)) {
+                    $query->whereIn('difficulty', $difficulty);
                 }
             }
 
@@ -69,6 +106,14 @@ class ProductController extends Controller
             }
             if (isset($filters['total_player_to'])) {
                 $query->where('min_player', '<=', (int) $filters['total_player_to']);
+            }
+
+            // Price range filters (checks effective price: discounted_price if set, otherwise price)
+            if (isset($filters['price_from'])) {
+                $query->whereRaw('COALESCE(discounted_price, price) >= ?', [(int) $filters['price_from']]);
+            }
+            if (isset($filters['price_to'])) {
+                $query->whereRaw('COALESCE(discounted_price, price) <= ?', [(int) $filters['price_to']]);
             }
 
             // Sort logic

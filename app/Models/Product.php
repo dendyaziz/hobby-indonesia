@@ -47,12 +47,15 @@ class Product extends Model implements HasMedia
         'youtube',
         'tiktok_videos',
         'description',
+        'difficulty',
+        'themes',
     ];
 
     protected function casts(): array
     {
         return [
             'tiktok_videos' => 'array',
+            'themes' => 'array',
         ];
     }
 

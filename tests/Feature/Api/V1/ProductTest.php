@@ -277,3 +277,105 @@ test('it caches product detail and flushes cache when product changes', function
     $product->update(['name' => 'Updated Brass']);
     expect(Cache::tags(['public'])->has($key))->toBeFalse();
 });
+
+test('it filters products by difficulty', function () {
+    Product::create([
+        'name' => 'Game Easy',
+        'slug' => 'game-easy',
+        'availability' => 'Available',
+        'price' => 100000,
+        'difficulty' => 'Easy',
+        'description' => 'Easy game description',
+    ]);
+
+    Product::create([
+        'name' => 'Game Hard',
+        'slug' => 'game-hard',
+        'availability' => 'Available',
+        'price' => 150000,
+        'difficulty' => 'Hard',
+        'description' => 'Hard game description',
+    ]);
+
+    $this->getJson('/api/v1/products?difficulty=Easy')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.name', 'Game Easy');
+});
+
+test('it filters products by themes', function () {
+    Product::create([
+        'name' => 'Abstract Game',
+        'slug' => 'abstract-game',
+        'availability' => 'Available',
+        'price' => 100000,
+        'themes' => ['Abstract'],
+        'description' => 'Abstract theme',
+    ]);
+
+    Product::create([
+        'name' => 'Adventure Game',
+        'slug' => 'adventure-game',
+        'availability' => 'Available',
+        'price' => 150000,
+        'themes' => ['Adventure'],
+        'description' => 'Adventure theme',
+    ]);
+
+    Product::create([
+        'name' => 'Fantasy Game',
+        'slug' => 'fantasy-game',
+        'availability' => 'Available',
+        'price' => 120000,
+        'themes' => ['Fantasy'],
+        'description' => 'Fantasy theme',
+    ]);
+
+    // Single theme
+    $this->getJson('/api/v1/products?themes=Abstract')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.name', 'Abstract Game');
+
+    // Multiple themes (Abstract, Fantasy)
+    $this->getJson('/api/v1/products?themes=Abstract,Fantasy')
+        ->assertOk()
+        ->assertJsonCount(2, 'data')
+        ->assertJsonPath('data.0.name', 'Abstract Game')
+        ->assertJsonPath('data.1.name', 'Fantasy Game');
+});
+
+test('it returns themes list with counts', function () {
+    Product::create([
+        'name' => 'Game A',
+        'slug' => 'game-a',
+        'availability' => 'Available',
+        'price' => 100000,
+        'themes' => ['Abstract', 'Adventure'],
+        'description' => 'Desc A',
+    ]);
+
+    Product::create([
+        'name' => 'Game B',
+        'slug' => 'game-b',
+        'availability' => 'Available',
+        'price' => 200000,
+        'themes' => ['Abstract'],
+        'description' => 'Desc B',
+    ]);
+
+    $this->getJson('/api/v1/themes')
+        ->assertOk()
+        ->assertJsonFragment([
+            'name' => 'Abstract',
+            'products_count' => 2,
+        ])
+        ->assertJsonFragment([
+            'name' => 'Adventure',
+            'products_count' => 1,
+        ])
+        ->assertJsonFragment([
+            'name' => 'Horror',
+            'products_count' => 0,
+        ]);
+});

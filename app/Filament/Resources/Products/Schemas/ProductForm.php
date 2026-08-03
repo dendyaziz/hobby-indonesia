@@ -154,6 +154,34 @@ class ProductForm
                                     ->label('Maximum player')
                                     ->numeric()
                                     ->minValue(1),
+                                Select::make('difficulty')
+                                    ->options([
+                                        'Easy' => 'Easy',
+                                        'Medium' => 'Medium',
+                                        'Hard' => 'Hard',
+                                    ])
+                                    ->required(),
+                                Select::make('themes')
+                                    ->label('Theme')
+                                    ->options([
+                                        'Abstract' => 'Abstract',
+                                        'Adventure' => 'Adventure',
+                                        'Animals' => 'Animals',
+                                        'City Building' => 'City Building',
+                                        'Civilization' => 'Civilization',
+                                        'Cooperative' => 'Cooperative',
+                                        'Deduction / Mystery' => 'Deduction / Mystery',
+                                        'Dungeon Crawler' => 'Dungeon Crawler',
+                                        'Economy' => 'Economy',
+                                        'Fantasy' => 'Fantasy',
+                                        'Horror' => 'Horror',
+                                        'Racing' => 'Racing',
+                                        'Sci-Fi' => 'Sci-Fi',
+                                        'Survival' => 'Survival',
+                                        'War / Historical' => 'War / Historical',
+                                    ])
+                                    ->multiple()
+                                    ->required(),
                             ])
                             ->columns(2),
 
