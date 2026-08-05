@@ -112,4 +112,14 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(ProductCharacter::class)->orderBy('position');
     }
+
+    /**
+     * Get the guides associated with this product.
+     *
+     * @return HasMany<ProductGuide, $this>
+     */
+    public function guides(): HasMany
+    {
+        return $this->hasMany(ProductGuide::class)->orderBy('position');
+    }
 }

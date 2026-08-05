@@ -44,6 +44,9 @@ class ProductResource extends JsonResource
             'characters' => $this->relationLoaded('characters')
                 ? ProductCharacterResource::collection($this->characters)->resolve()
                 : ProductCharacterResource::collection($this->characters()->orderBy('position')->get())->resolve(),
+            'guides' => $this->relationLoaded('guides')
+                ? ProductGuideResource::collection($this->guides)->resolve()
+                : ProductGuideResource::collection($this->guides()->orderBy('position')->get())->resolve(),
             'image_urls' => $this->getMedia('product-images')
                 ->map(fn (Media $media): string => $media->getUrl())
                 ->values()

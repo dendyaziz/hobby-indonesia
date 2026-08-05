@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Products\Schemas;
 
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\RelationManagers\CharactersRelationManager;
+use App\Filament\Resources\Products\RelationManagers\GuidesRelationManager;
 use App\Models\Product;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
@@ -257,6 +258,13 @@ class ProductForm
                             'ownerRecord' => $record,
                             'pageClass' => EditProduct::class,
                         ] : [])
+                            ->key('characters-relation-manager')
+                            ->visible(fn (?Product $record) => $record !== null),
+                        Livewire::make(GuidesRelationManager::class, fn (?Product $record) => $record ? [
+                            'ownerRecord' => $record,
+                            'pageClass' => EditProduct::class,
+                        ] : [])
+                            ->key('guides-relation-manager')
                             ->visible(fn (?Product $record) => $record !== null),
                     ])
                     ->columnSpan(['lg' => 2]),

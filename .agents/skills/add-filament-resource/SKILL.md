@@ -177,10 +177,24 @@ Use this skill whenever you are tasked with creating a new model, database migra
    - **Filament Form Layout**: Hide/omit the orderable column completely from the Filament resource form layout since it must only be changed via the table reordering interface.
    - **Filament Table Layout**: Always show/include the orderable column in the table columns (e.g. `TextColumn::make('position')->sortable()`) so the list remains explicitly ordered and verifiable.
 
-7. **Pest Integration Testing**:
+7. **Embedded Relation Managers & Livewire Components**:
+   - **Embedding in Form Schemas**: Relation managers can be embedded directly into parent form schemas using `Livewire::make(SomeRelationManager::class, fn (?Model $record) => $record ? ['ownerRecord' => $record, 'pageClass' => EditModel::class] : [])->visible(fn (?Model $record) => $record !== null)`.
+   - **CRITICAL Livewire Unique Key (`->key()`)**: When embedding multiple `Livewire::make()` components inside a parent form schema, you **MUST** chain an explicit unique key to each component (e.g., `->key('characters-relation-manager')`, `->key('guides-relation-manager')`). Without explicit keys, Livewire cannot differentiate components during DOM diffing after a parent form save action ("Save changes"), causing Livewire to swap or re-hydrate components with another component's state on the page.
+   - **Width Alignment & Cleanup**: Embed the relation manager components inside `Group::make()->columnSpan(['lg' => 2])` to match the main column group width. Remove the relation manager classes from `getRelations()` in the main resource class to prevent duplicate footer rendering.
+   - **Modal Form & Footer Actions**: For single-column relation manager popup modals where row actions are simplified, move the `Delete` action into the `Edit` modal popup footer using:
+     ```php
+     ->recordActions([
+         EditAction::make()
+             ->extraModalFooterActions([
+                 DeleteAction::make(),
+             ]),
+     ])
+     ```
+
+8. **Pest Integration Testing**:
    - Write robust, functional Pest tests under `tests/Feature/<ModelName>Test.php` asserting successful index and create page loading, form creation validations, and editing/saving capabilities. Use `RefreshDatabase` and fake S3 storage (`Storage::fake('s3')`) if file uploads are executed during testing.
 
-8. **Navigation Grouping, Icons, & Parent Breadcrumbs**:
+9. **Navigation Grouping, Icons, & Parent Breadcrumbs**:
    - **Collapsible Sidebar Folders**: Register collapsible group folders in your panel provider (e.g. `AdminPanelProvider.php`) to group related resources cleanly in the sidebar (without group-level icons):
      ```php
      ->navigationGroups([
@@ -197,7 +211,7 @@ Use this skill whenever you are tasked with creating a new model, database migra
    - **Custom Parent Breadcrumbs**: Prepend the parent navigation group folder label (e.g., `'Homepage'` or `'Reseller'`) dynamically as a **non-clickable parent breadcrumb** (using a `'#'` key) at the beginning of the breadcrumbs trail (e.g. `Homepage > Hero Banners > List`).
      - To keep the codebase DRY, simply import and use the shared `HasGroupBreadcrumbs` trait inside the resource's three page classes (`List`, `Create`, `Edit`).
 
-9. **Singular Filament Resources**:
+10. **Singular Filament Resources**:
     - **Concept**: For models representing singular system settings or configuration pages (e.g., Social Media links, Contact Details), create a custom Filament Page rather than a full multi-page CRUD Resource.
     - **Model Setup**: Set up standard Eloquent traits (`HasUuids`) and define fillable attributes.
     - **Page Setup**: Create a Page class extending `Filament\Pages\Page`, overriding `$view` with a simple blade file that renders the form (`{{ $this->form }}`).
@@ -235,13 +249,13 @@ Use this skill whenever you are tasked with creating a new model, database migra
         ```
     - **Seeding**: Always seed the default singular record using `firstOrCreate()` within `DatabaseSeeder.php` rather than directly in database migrations, allowing standard application-wide seeding practices.
 
-10. **Database Migrations Safety**:
+11. **Database Migrations Safety**:
     - **NEVER use or suggest `php artisan migrate:fresh`**: This command wipes the entire database which will reset all user-entered records, even during local development.
     - **Migration Modification Flow**: If a migration needs changes or a table needs recreation:
       - Instruct the user to use target rollbacks (e.g. `php artisan migrate:rollback --step=1` to roll back the single last migration).
       - Modify the specific migration file and run `php artisan migrate` to re-apply the schema changes safely.
 
-11. **Resource Permissions Registration**:
+12. **Resource Permissions Registration**:
     - Every newly created CRUD Resource must be registered in the permission system:
       1. Add the model name to the `$models` array in `database/seeders/RolesAndPermissionsSeeder.php` so its dynamic view and manage permissions are created.
       2. Map the model name to the corresponding permission group category in `app/Filament/Resources/Administrator/Schemas/RoleForm.php` (inside `$groups` array) so it can be managed and assigned to roles in the Filament UI.
