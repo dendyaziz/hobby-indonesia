@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Filament\Resources\Products\Pages\EditProduct;
+use App\Filament\Resources\Products\RelationManagers\CharactersRelationManager;
 use App\Models\Product;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
@@ -12,6 +14,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -185,6 +188,24 @@ class ProductForm
                             ])
                             ->columns(2),
 
+                        Section::make('Everything you need to know')
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('everything_you_need_to_know_image')
+                                    ->label('Image')
+                                    ->collection('everything-you-need-to-know-image')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->imagePreviewHeight(250)
+                                    ->columnSpanFull(),
+                                RichEditor::make('everything_you_need_to_know_description')
+                                    ->label('Description')
+                                    ->toolbarButtons([
+                                        'bold',
+                                        'italic',
+                                    ])
+                                    ->columnSpanFull(),
+                            ]),
+
                         Section::make('Video Attachments')
                             ->schema([
                                 TextInput::make('youtube')
@@ -232,6 +253,11 @@ class ProductForm
                                     ->default([])
                                     ->nullable(),
                             ]),
+                        Livewire::make(CharactersRelationManager::class, fn (?Product $record) => $record ? [
+                            'ownerRecord' => $record,
+                            'pageClass' => EditProduct::class,
+                        ] : [])
+                            ->visible(fn (?Product $record) => $record !== null),
                     ])
                     ->columnSpan(['lg' => 2]),
 

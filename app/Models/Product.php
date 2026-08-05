@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -47,6 +48,7 @@ class Product extends Model implements HasMedia
         'youtube',
         'tiktok_videos',
         'description',
+        'everything_you_need_to_know_description',
         'difficulty',
         'themes',
     ];
@@ -74,6 +76,21 @@ class Product extends Model implements HasMedia
                     ->height(400)
                     ->format('webp');
             });
+
+        $this
+            ->addMediaCollection('everything-you-need-to-know-image')
+            ->singleFile()
+            ->registerMediaConversions(function (Media $media): void {
+                $this
+                    ->addMediaConversion('small')
+                    ->height(40)
+                    ->format('webp');
+
+                $this
+                    ->addMediaConversion('thumbnail')
+                    ->height(400)
+                    ->format('webp');
+            });
     }
 
     /**
@@ -84,5 +101,15 @@ class Product extends Model implements HasMedia
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'category_product', 'product_id', 'category_id')->withTimestamps();
+    }
+
+    /**
+     * Get the characters associated with this product.
+     *
+     * @return HasMany<ProductCharacter, $this>
+     */
+    public function characters(): HasMany
+    {
+        return $this->hasMany(ProductCharacter::class)->orderBy('position');
     }
 }

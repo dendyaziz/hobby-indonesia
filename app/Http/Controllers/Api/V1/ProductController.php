@@ -159,7 +159,7 @@ class ProductController extends Controller
     {
         $data = Cache::tags(['public'])->remember("product__detail_{$slug}", now()->addDays(30), function () use ($slug) {
             $product = Product::where('slug', $slug)
-                ->with(['media', 'categories'])
+                ->with(['media', 'categories', 'characters' => fn ($query) => $query->orderBy('position')])
                 ->firstOrFail();
 
             return (new ProductResource($product))->resolve();

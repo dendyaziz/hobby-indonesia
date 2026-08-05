@@ -27,6 +27,8 @@ class ProductResource extends JsonResource
             'max_player' => $this->max_player,
             'playing_duration' => $this->playing_duration,
             'description' => $this->description,
+            'everything_you_need_to_know_description' => $this->everything_you_need_to_know_description,
+            'everything_you_need_to_know_image_url' => $this->getFirstMediaUrl('everything-you-need-to-know-image') ?: null,
             'youtube' => $this->youtube,
             'tiktok_videos' => $this->tiktok_videos ?? [],
             'brand' => $this->brand,
@@ -39,6 +41,9 @@ class ProductResource extends JsonResource
             'categories' => $this->relationLoaded('categories')
                 ? CategoryResource::collection($this->categories)->resolve()
                 : $this->whenLoaded('categories'),
+            'characters' => $this->relationLoaded('characters')
+                ? ProductCharacterResource::collection($this->characters)->resolve()
+                : ProductCharacterResource::collection($this->characters()->orderBy('position')->get())->resolve(),
             'image_urls' => $this->getMedia('product-images')
                 ->map(fn (Media $media): string => $media->getUrl())
                 ->values()
