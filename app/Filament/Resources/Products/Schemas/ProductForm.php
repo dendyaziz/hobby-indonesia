@@ -242,7 +242,7 @@ class ProductForm
                                                         return;
                                                     }
 
-                                                    $pattern = '/^(https?:\/\/)?((www|vm|vt)\.)?tiktok\.com\/[a-zA-Z0-9_@\-\/]+([?&].*)?$/i';
+                                                    $pattern = '/^(https?:\/\/)?((www|vm|vt|t|m)\.)?tiktok\.com\/[a-zA-Z0-9_@\.\-\/]+([?&].*)?$/i';
 
                                                     if (! preg_match($pattern, $value)) {
                                                         $fail('The TikTok video URL is not valid.');

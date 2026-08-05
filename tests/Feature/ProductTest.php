@@ -280,6 +280,7 @@ it('validates tiktok_videos validation rules', function () {
             'tiktok_videos' => [
                 ['url' => 'https://www.tiktok.com/@user/video/1234567890'],
                 ['url' => 'https://vt.tiktok.com/ZS23456/'],
+                ['url' => 'https://www.tiktok.com/@hobbyindonesia.id/video/7606214793002847495'],
             ],
             'images' => [
                 UploadedFile::fake()->image('product_test.jpg'),
