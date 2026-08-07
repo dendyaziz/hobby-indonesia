@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\ArticleController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CollectionController;
 use App\Http\Controllers\Api\V1\ContactController;
+use App\Http\Controllers\Api\V1\FaqController;
 use App\Http\Controllers\Api\V1\HeroBannerController;
 use App\Http\Controllers\Api\V1\PartnerController;
 use App\Http\Controllers\Api\V1\ProductBannerController;
@@ -29,4 +30,5 @@ Route::prefix('v1')->group(function (): void {
     Route::get('partners', [PartnerController::class, 'index']);
     Route::get('articles', [ArticleController::class, 'index']);
     Route::get('articles/{article:slug}', [ArticleController::class, 'show']);
+    Route::get('faqs', [FaqController::class, 'index']);
 });
