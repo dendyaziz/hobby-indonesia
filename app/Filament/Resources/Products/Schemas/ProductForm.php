@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Products\Schemas;
 
 use App\Filament\Resources\Products\Pages\EditProduct;
+use App\Filament\Resources\Products\RelationManagers\BoxItemsRelationManager;
 use App\Filament\Resources\Products\RelationManagers\CharactersRelationManager;
 use App\Filament\Resources\Products\RelationManagers\GuidesRelationManager;
 use App\Models\Product;
@@ -272,6 +273,12 @@ class ProductForm
                             'pageClass' => EditProduct::class,
                         ] : [])
                             ->key('guides-relation-manager')
+                            ->visible(fn (?Product $record) => $record !== null),
+                        Livewire::make(BoxItemsRelationManager::class, fn (?Product $record) => $record ? [
+                            'ownerRecord' => $record,
+                            'pageClass' => EditProduct::class,
+                        ] : [])
+                            ->key('box-items-relation-manager')
                             ->visible(fn (?Product $record) => $record !== null),
                     ])
                     ->columnSpan(['lg' => 2]),

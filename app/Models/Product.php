@@ -123,4 +123,14 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(ProductGuide::class)->orderBy('position');
     }
+
+    /**
+     * Get the box items associated with this product.
+     *
+     * @return HasMany<ProductBoxItem, $this>
+     */
+    public function boxItems(): HasMany
+    {
+        return $this->hasMany(ProductBoxItem::class)->orderBy('position');
+    }
 }

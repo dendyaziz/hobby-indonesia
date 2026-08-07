@@ -164,6 +164,7 @@ class ProductController extends Controller
                     'categories',
                     'characters' => fn ($query) => $query->orderBy('position'),
                     'guides' => fn ($query) => $query->orderBy('position'),
+                    'boxItems' => fn ($query) => $query->orderBy('position'),
                 ])
                 ->firstOrFail();
 

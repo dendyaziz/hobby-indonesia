@@ -48,6 +48,9 @@ class ProductResource extends JsonResource
             'guides' => $this->relationLoaded('guides')
                 ? ProductGuideResource::collection($this->guides)->resolve()
                 : ProductGuideResource::collection($this->guides()->orderBy('position')->get())->resolve(),
+            'box_items' => $this->relationLoaded('boxItems')
+                ? ProductBoxItemResource::collection($this->boxItems)->resolve()
+                : ProductBoxItemResource::collection($this->boxItems()->orderBy('position')->get())->resolve(),
             'image_urls' => $this->getMedia('product-images')
                 ->map(fn (Media $media): string => $media->getUrl())
                 ->values()
