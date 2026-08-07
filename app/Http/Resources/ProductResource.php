@@ -30,6 +30,7 @@ class ProductResource extends JsonResource
             'everything_you_need_to_know_description' => $this->everything_you_need_to_know_description,
             'everything_you_need_to_know_image_url' => $this->getFirstMediaUrl('everything-you-need-to-know-image') ?: null,
             'youtube' => $this->youtube,
+            'playbook_url' => $this->playbook_url,
             'tiktok_videos' => $this->tiktok_videos ?? [],
             'brand' => $this->brand,
             'manufacture_country' => $this->manufacture_country,

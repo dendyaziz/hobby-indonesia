@@ -207,8 +207,15 @@ class ProductForm
                                     ->columnSpanFull(),
                             ]),
 
-                        Section::make('Video Attachments')
+                        Section::make('Playbook & Video Attachments')
                             ->schema([
+                                TextInput::make('playbook_url')
+                                    ->label('Playbook Link')
+                                    ->url()
+                                    ->placeholder('https://drive.google.com/file/d/.../view?usp=sharing')
+                                    ->helperText('Input a valid URL for the playbook (usually a Google Drive link). If left empty, the playbook section will be hidden on the frontend.')
+                                    ->nullable()
+                                    ->columnSpanFull(),
                                 TextInput::make('youtube')
                                     ->label('YouTube Video URL')
                                     ->maxLength(100)

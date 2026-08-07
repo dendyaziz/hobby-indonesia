@@ -46,6 +46,7 @@ class Product extends Model implements HasMedia
         'max_player',
         'playing_duration',
         'youtube',
+        'playbook_url',
         'tiktok_videos',
         'description',
         'everything_you_need_to_know_description',

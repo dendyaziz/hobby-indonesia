@@ -53,6 +53,7 @@ it('can create a product and save to database', function () {
             'max_player' => 4,
             'playing_duration' => 60,
             'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            'playbook_url' => 'https://drive.google.com/file/d/1tpCTks05oMtXhZ60EotNKprY8nEBki0s/view?usp=sharing',
             'tiktok_videos' => [
                 ['url' => 'https://www.tiktok.com/@username/video/7391234567890123456'],
                 ['url' => 'https://vt.tiktok.com/ZS23456/'],
@@ -87,6 +88,7 @@ it('can create a product and save to database', function () {
         'max_player' => 4,
         'playing_duration' => 60,
         'youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'playbook_url' => 'https://drive.google.com/file/d/1tpCTks05oMtXhZ60EotNKprY8nEBki0s/view?usp=sharing',
         'description' => '<p>This is a super fun game for the whole family.</p>',
         'difficulty' => 'Easy',
         'themes' => json_encode(['Abstract', 'Animals']),
@@ -334,6 +336,7 @@ it('can edit and update a product and its categories', function () {
         'description' => '<p>Original description</p>',
         'difficulty' => 'Easy',
         'themes' => ['Abstract'],
+        'playbook_url' => 'https://drive.google.com/file/d/old/view',
     ]);
     $product->categories()->attach($this->subCategory);
     $product->attachTags(['OldTag1', 'OldTag2']);
@@ -349,6 +352,7 @@ it('can edit and update a product and its categories', function () {
             'difficulty' => 'Easy',
             'themes' => ['Abstract'],
             'tags' => ['OldTag1', 'OldTag2'],
+            'playbook_url' => 'https://drive.google.com/file/d/old/view',
         ])
         ->fillForm([
             'name' => 'Updated Name',
@@ -362,6 +366,7 @@ it('can edit and update a product and its categories', function () {
             ],
             'categories' => [$newSubCategory->id],
             'tags' => ['UpdatedTag'],
+            'playbook_url' => 'https://drive.google.com/file/d/new/view',
         ])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -372,6 +377,7 @@ it('can edit and update a product and its categories', function () {
         'price' => 120000,
         'difficulty' => 'Medium',
         'themes' => json_encode(['Animals']),
+        'playbook_url' => 'https://drive.google.com/file/d/new/view',
     ]);
 
     $product->refresh();
