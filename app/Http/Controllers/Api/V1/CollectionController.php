@@ -53,8 +53,10 @@ class CollectionController extends Controller
                 : array_filter(explode(',', (string) $excludeSlug));
 
             if (! empty($excludeSlugs)) {
-                $data = array_values(array_filter($data, function (array $product) use ($excludeSlugs): bool {
-                    return ! in_array($product['slug'] ?? null, $excludeSlugs, true);
+                $data = array_values(array_filter($data, function ($product) use ($excludeSlugs): bool {
+                    $prodSlug = is_array($product) ? ($product['slug'] ?? null) : ($product->slug ?? null);
+
+                    return ! in_array($prodSlug, $excludeSlugs, true);
                 }));
             }
         }
