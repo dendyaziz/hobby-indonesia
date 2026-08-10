@@ -43,16 +43,17 @@ it('can manage box items via relation manager', function () {
         'pageClass' => EditProduct::class,
     ])
         ->assertOk()
-        ->callTableAction('create', data: [
-            'label' => '44 path cards',
-            'icon_name' => 'waypoints',
-        ])
+        ->mountTableAction('create')
+        ->set('mountedActions.0.data.label', '44 path cards')
+        ->set('mountedActions.0.data.icon_source', 'predefined')
+        ->set('mountedActions.0.data.icon_name', 'Path.svg')
+        ->callMountedTableAction()
         ->assertHasNoTableActionErrors();
 
     $this->assertDatabaseHas('product_box_items', [
         'product_id' => $this->product->id,
         'label' => '44 path cards',
-        'icon_name' => 'waypoints',
+        'icon_name' => 'Path.svg',
         'position' => 1,
     ]);
 
@@ -63,11 +64,11 @@ it('can manage box items via relation manager', function () {
         'ownerRecord' => $this->product,
         'pageClass' => EditProduct::class,
     ])
-        ->callTableAction('create', data: [
-            'label' => 'Custom Dice',
-            'icon_name' => 'custom',
-            'image' => UploadedFile::fake()->image('custom_icon.png'),
-        ])
+        ->mountTableAction('create')
+        ->set('mountedActions.0.data.label', 'Custom Dice')
+        ->set('mountedActions.0.data.icon_source', 'custom')
+        ->set('mountedActions.0.data.image', UploadedFile::fake()->image('custom_icon.png'))
+        ->callMountedTableAction()
         ->assertHasNoTableActionErrors();
 
     $this->assertDatabaseHas('product_box_items', [
@@ -85,16 +86,17 @@ it('can manage box items via relation manager', function () {
         'ownerRecord' => $this->product,
         'pageClass' => EditProduct::class,
     ])
-        ->callTableAction('edit', record: $item1, data: [
-            'label' => '44 updated path cards',
-            'icon_name' => 'gem',
-        ])
+        ->mountTableAction('edit', record: $item1)
+        ->set('mountedActions.0.data.label', '44 updated path cards')
+        ->set('mountedActions.0.data.icon_source', 'predefined')
+        ->set('mountedActions.0.data.icon_name', 'Diamond.svg')
+        ->callMountedTableAction()
         ->assertHasNoTableActionErrors();
 
     $this->assertDatabaseHas('product_box_items', [
         'id' => $item1->id,
         'label' => '44 updated path cards',
-        'icon_name' => 'gem',
+        'icon_name' => 'Diamond.svg',
     ]);
 
     // 4. Delete Box Item
@@ -130,10 +132,10 @@ it('includes box items in product detail api response', function () {
         ->assertJsonCount(2, 'data.box_items')
         ->assertJsonPath('data.box_items.0.label', '44 path cards')
         ->assertJsonPath('data.box_items.0.icon_name', 'waypoints')
-        ->assertJsonPath('data.box_items.0.icon_url', null)
         ->assertJsonPath('data.box_items.1.label', 'Custom Tokens')
         ->assertJsonPath('data.box_items.1.icon_name', 'custom');
 
     $boxItems = $response->json('data.box_items');
+    expect($boxItems[0]['icon_url'])->toEndWith('/icons/waypoints.svg');
     expect($boxItems[1]['icon_url'])->not->toBeNull();
 });

@@ -18,7 +18,9 @@ class ProductBoxItemResource extends JsonResource
             'id' => $this->id,
             'label' => $this->label,
             'icon_name' => $this->icon_name,
-            'icon_url' => $this->icon_name === 'custom' ? $this->getFirstMediaUrl('box-item-custom-icon') ?: null : null,
+            'icon_url' => $this->icon_name === 'custom'
+                ? ($this->getFirstMediaUrl('box-item-custom-icon') ?: null)
+                : asset('icons/'.(str_ends_with($this->icon_name, '.svg') ? $this->icon_name : $this->icon_name.'.svg')),
             'position' => (int) $this->position,
         ];
     }
