@@ -15,8 +15,8 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\File;
 
@@ -94,13 +94,9 @@ class BoxItemsRelationManager extends RelationManager
                     ->label('Sequence')
                     ->prefix('#')
                     ->sortable(),
-                SpatieMediaLibraryImageColumn::make('image')
-                    ->collection('box-item-custom-icon')
-                    ->conversion('small')
-                    ->label('Custom Icon'),
-                TextColumn::make('icon_name')
-                    ->label('Icon Type')
-                    ->formatStateUsing(fn (string $state) => ucfirst(str_replace('-', ' ', $state))),
+                ViewColumn::make('icon')
+                    ->label('Icon')
+                    ->view('filament.tables.columns.box-item-icon'),
                 TextColumn::make('label')
                     ->searchable()
                     ->sortable(),
