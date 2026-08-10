@@ -3,7 +3,7 @@
     $iconName = $record->icon_name;
     $isCustom = $iconName === 'custom';
     $imageUrl = $isCustom ? $record->getFirstMediaUrl('box-item-custom-icon') : null;
-    
+
     $svgContent = null;
     if (!$isCustom && $iconName) {
         $legacyMap = [
@@ -12,10 +12,10 @@
             'user-round' => 'User.svg',
             'waypoints' => 'Path.svg',
         ];
-        
+
         $normalized = strtolower(trim($iconName));
         $filename = $legacyMap[$normalized] ?? (str_ends_with($iconName, '.svg') ? $iconName : $iconName . '.svg');
-        
+
         $svgPath = public_path('icons/' . $filename);
         if (!file_exists($svgPath) && !str_ends_with($iconName, '.svg')) {
             $capitalizedFilename = ucfirst($iconName) . '.svg';
@@ -24,7 +24,7 @@
                 $svgPath = $svgPathCapitalized;
             }
         }
-        
+
         if (file_exists($svgPath)) {
             $svgContent = file_get_contents($svgPath);
         }
@@ -38,8 +38,8 @@
         <div class="table-icon-wrapper w-8 h-8 flex items-center justify-center" style="color: #E38825; width: 32px; height: 32px;">
             <style>
                 .table-icon-wrapper svg {
-                    width: 20px !important;
-                    height: 20px !important;
+                    width: 32px !important;
+                    height: 32px !important;
                     display: block;
                     margin: auto;
                 }
