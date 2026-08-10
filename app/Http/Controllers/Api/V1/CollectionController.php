@@ -19,7 +19,7 @@ class CollectionController extends Controller
         $slug = $collection->slug;
 
         $data = Cache::tags(['public'])->remember("collection__products_{$slug}", now()->addDays(30), function () use ($collection) {
-            $collection->loadMissing(['items.product.media', 'items.product.tags']);
+            $collection->loadMissing(['items.product.media', 'items.product.tags', 'items.product.categories']);
 
             $products = $collection->items
                 ->map(fn ($item) => $item->product)
@@ -27,6 +27,24 @@ class CollectionController extends Controller
 
             return ProductResource::collection($products)->resolve();
         });
+
+        $categories = $request->query('categories');
+        if (! empty($categories)) {
+            $categorySlugs = is_array($categories)
+                ? $categories
+                : array_filter(explode(',', (string) $categories));
+
+            if (! empty($categorySlugs)) {
+                $data = array_values(array_filter($data, function (array $product) use ($categorySlugs): bool {
+                    $prodCategories = $product['categories'] ?? [];
+                    $prodCatSlugs = array_map(function ($cat) {
+                        return is_array($cat) ? ($cat['slug'] ?? null) : ($cat->slug ?? null);
+                    }, $prodCategories);
+
+                    return ! empty(array_intersect($prodCatSlugs, $categorySlugs));
+                }));
+            }
+        }
 
         $excludeSlug = $request->query('exclude_slug');
         if (! empty($excludeSlug)) {

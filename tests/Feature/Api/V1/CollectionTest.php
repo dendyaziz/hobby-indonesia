@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Collection;
 use App\Models\CollectionItem;
 use App\Models\Product;
@@ -163,4 +164,36 @@ test('it excludes product by exclude_slug parameter', function () {
         ->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.slug', 'game-2');
+});
+
+test('it filters collection products by categories parameter', function () {
+    $collection = Collection::factory()->create(['slug' => 'best-seller', 'title' => 'Best Seller']);
+    $cat1 = Category::create(['name' => 'Family', 'slug' => 'family']);
+    $cat2 = Category::create(['name' => 'Strategy', 'slug' => 'strategy']);
+
+    $product1 = Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+    $product1->categories()->attach($cat1);
+
+    $product2 = Product::create([
+        'name' => 'Game 2',
+        'slug' => 'game-2',
+        'availability' => 'Available',
+        'price' => 20000,
+        'description' => 'Description 2',
+    ]);
+    $product2->categories()->attach($cat2);
+
+    CollectionItem::create(['collection_id' => $collection->id, 'product_id' => $product1->id, 'position' => 1]);
+    CollectionItem::create(['collection_id' => $collection->id, 'product_id' => $product2->id, 'position' => 2]);
+
+    $this->getJson('/api/v1/collections/best-seller/products?categories=family')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.slug', 'game-1');
 });
