@@ -8,16 +8,16 @@ use App\Models\Collection;
 use App\Models\CollectionItem;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+use Filament\Actions\DeleteAction;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\Testing\TestAction;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
     $user->assignRole('Super Admin');

@@ -2,14 +2,14 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\SetupPassword;
+use App\Filament\Pages\Dashboard;
+use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Pages\Auth\SetupPassword;
-use App\Filament\Pages\Dashboard;
-use Filament\Auth\Pages\PasswordReset\ResetPassword;
-use Illuminate\Support\Facades\Route;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -20,6 +20,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -52,19 +53,19 @@ class AdminPanelProvider extends PanelProvider
                 FilamentInfoWidget::class,
             ])
             ->navigationGroups([
-                \Filament\Navigation\NavigationGroup::make()
+                NavigationGroup::make()
                     ->label('Public')
                     ->collapsed(),
-                \Filament\Navigation\NavigationGroup::make()
+                NavigationGroup::make()
                     ->label('Listing')
                     ->collapsed(),
-                \Filament\Navigation\NavigationGroup::make()
+                NavigationGroup::make()
                     ->label('Homepage')
                     ->collapsed(),
-                \Filament\Navigation\NavigationGroup::make()
+                NavigationGroup::make()
                     ->label('Reseller')
                     ->collapsed(),
-                \Filament\Navigation\NavigationGroup::make()
+                NavigationGroup::make()
                     ->label('Administrator')
                     ->collapsed(),
             ])

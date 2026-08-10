@@ -22,8 +22,8 @@ class ArticleFactory extends Factory
 
         return [
             'title' => $title,
-            'slug' => Str::slug($title) . '-' . $this->faker->unique()->numberBetween(1000, 9999),
-            'content' => '<p>' . implode('</p><p>', $this->faker->paragraphs(3)) . '</p>',
+            'slug' => Str::slug($title).'-'.$this->faker->unique()->numberBetween(1000, 9999),
+            'content' => '<p>'.implode('</p><p>', $this->faker->paragraphs(3)).'</p>',
             'status' => $this->faker->randomElement(['draft', 'published']),
         ];
     }

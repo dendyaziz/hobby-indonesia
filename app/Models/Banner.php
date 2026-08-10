@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Models;
- 
+
+use Database\Factories\BannerFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,8 +12,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Banner extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\BannerFactory> */
+    /** @use HasFactory<BannerFactory> */
     use HasFactory, HasUuids;
+
     use InteractsWithMedia;
 
     protected $fillable = [

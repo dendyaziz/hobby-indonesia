@@ -15,7 +15,7 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $models = [
-            'Article', 'Testimony', 'Faq', 'HeroBanner', 'ProductBanner', 'ResellerBanner', 'Product',
+            'Article', 'Testimony', 'Faq', 'ProductBanner', 'ResellerBanner', 'Product',
             'Category', 'Event', 'Partner', 'User', 'Role',
             'Contact', 'SocialMedia', 'Collection',
         ];

@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
 /**
  * @extends Factory<Collection>
  */
@@ -20,6 +19,7 @@ class CollectionFactory extends Factory
     public function definition(): array
     {
         $title = $this->faker->unique()->words(3, true);
+
         return [
             'title' => $title,
             'slug' => Str::slug($title),

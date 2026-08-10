@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Banners\Tables;
 
+use App\Models\Banner;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -37,21 +38,19 @@ class BannersTable
 
                 TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state, \App\Models\Banner $record): string =>
-                        match (true) {
-                            $state === 'active' && $record->end_date && $record->end_date->isPast() => 'Expired',
-                            $state === 'active' && $record->start_date && $record->start_date->isFuture() => 'Scheduled',
-                            default => Str::headline($state),
-                        }
+                    ->formatStateUsing(fn (string $state, Banner $record): string => match (true) {
+                        $state === 'active' && $record->end_date && $record->end_date->isPast() => 'Expired',
+                        $state === 'active' && $record->start_date && $record->start_date->isFuture() => 'Scheduled',
+                        default => Str::headline($state),
+                    }
                     )
-                    ->color(fn (string $state, \App\Models\Banner $record): string =>
-                        match (true) {
-                            $state === 'active' && $record->end_date && $record->end_date->isPast() => 'danger',
-                            $state === 'active' && $record->start_date && $record->start_date->isFuture() => 'warning',
-                            $state === 'active' => 'success',
-                            $state === 'inactive' => 'danger',
-                            default => 'gray',
-                        }
+                    ->color(fn (string $state, Banner $record): string => match (true) {
+                        $state === 'active' && $record->end_date && $record->end_date->isPast() => 'danger',
+                        $state === 'active' && $record->start_date && $record->start_date->isFuture() => 'warning',
+                        $state === 'active' => 'success',
+                        $state === 'inactive' => 'danger',
+                        default => 'gray',
+                    }
                     ),
 
                 TextColumn::make('start_date')

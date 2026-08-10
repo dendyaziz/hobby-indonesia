@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Contact;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -10,10 +11,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use BackedEnum;
 use UnitEnum;
 
 /**
@@ -58,23 +58,23 @@ class ManageContact extends Page
                         ->columnSpanFull()
                         ->schema([
                             TextInput::make('company_name')
-                        ->label('Company Name')
-                        ->maxLength(50),
+                                ->label('Company Name')
+                                ->maxLength(50),
 
-                    TextInput::make('telephone')
-                        ->label('Telephone')
-                        ->tel()
-                        ->maxLength(20),
+                            TextInput::make('telephone')
+                                ->label('Telephone')
+                                ->tel()
+                                ->maxLength(20),
 
-                    TextInput::make('email')
-                        ->label('Email')
-                        ->email()
-                        ->maxLength(50),
+                            TextInput::make('email')
+                                ->label('Email')
+                                ->email()
+                                ->maxLength(50),
 
-                    Textarea::make('address')
-                        ->label('Address')
-                        ->rows(3),
-                    ]),
+                            Textarea::make('address')
+                                ->label('Address')
+                                ->rows(3),
+                        ]),
                 ])
                     ->livewireSubmitHandler('save')
                     ->footer([

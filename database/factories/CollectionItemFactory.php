@@ -2,14 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Collection;
 use App\Models\CollectionItem;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
 /**
  * @extends Factory<CollectionItem>
  */
-use App\Models\Collection;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class CollectionItemFactory extends Factory
 {
@@ -24,7 +24,7 @@ class CollectionItemFactory extends Factory
             'collection_id' => Collection::factory(),
             'product_id' => fn () => Product::create([
                 'name' => $this->faker->words(3, true),
-                'slug' => \Illuminate\Support\Str::slug($this->faker->words(3, true)),
+                'slug' => Str::slug($this->faker->words(3, true)),
                 'availability' => 'Available',
                 'price' => 100000,
                 'description' => '<p>Description</p>',

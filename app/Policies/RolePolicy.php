@@ -2,11 +2,13 @@
 
 namespace App\Policies;
 
+use App\Models\User;
+
 class RolePolicy extends BasePolicy
 {
     protected string $resourceName = 'Role';
 
-    public function update(\App\Models\User $user, $model): bool
+    public function update(User $user, $model): bool
     {
         if ($model->name === 'Super Admin') {
             return false;
@@ -15,7 +17,7 @@ class RolePolicy extends BasePolicy
         return parent::update($user, $model);
     }
 
-    public function delete(\App\Models\User $user, $model): bool
+    public function delete(User $user, $model): bool
     {
         if ($model->name === 'Super Admin') {
             return false;

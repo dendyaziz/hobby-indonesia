@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Banners\Traits\HasGroupBreadcrumbs;
 use App\Filament\Resources\Users\UserResource;
+use App\Notifications\AdminPasswordSetupNotification;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
@@ -14,6 +15,6 @@ class CreateUser extends CreateRecord
 
     protected function afterCreate(): void
     {
-        $this->record->notify(new \App\Notifications\AdminPasswordSetupNotification());
+        $this->record->notify(new AdminPasswordSetupNotification);
     }
 }

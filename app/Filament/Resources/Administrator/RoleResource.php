@@ -2,16 +2,16 @@
 
 namespace App\Filament\Resources\Administrator;
 
-use Spatie\Permission\Models\Role;
-use Filament\Resources\Resource;
-use Filament\Tables\Table;
-use BackedEnum;
-use UnitEnum;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use App\Filament\Resources\Administrator\Schemas\RoleForm;
 use App\Filament\Resources\Administrator\Tables\RolesTable;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role;
+use UnitEnum;
 
 class RoleResource extends Resource
 {

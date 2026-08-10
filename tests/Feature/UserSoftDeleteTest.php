@@ -22,7 +22,7 @@ class UserSoftDeleteTest extends TestCase
         $user->delete();
 
         $this->assertSoftDeleted($user);
-        
+
         $this->assertNull(User::find($user->id));
         $this->assertNotNull(User::withTrashed()->find($user->id));
     }

@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\HeroBanner;
 use App\Models\ProductBanner;
+use App\Models\ResellerBanner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 
@@ -31,7 +31,7 @@ test('it returns active product banners and hides internal attributes', function
     $second->position = 2;
     $second->save();
 
-    HeroBanner::factory()->create(['title' => 'Hero Banner']);
+    ResellerBanner::factory()->create(['title' => 'Reseller Banner']);
     ProductBanner::factory()->create(['status' => 'inactive']);
     ProductBanner::factory()->create(['start_date' => now()->addDay()]);
     ProductBanner::factory()->create(['end_date' => now()->subDay()]);

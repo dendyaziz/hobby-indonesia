@@ -5,6 +5,7 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
@@ -60,7 +61,7 @@ class SetupPassword extends SimplePage
             'activated_at' => now(),
         ]);
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('Password set successfully')
             ->success()
             ->send();

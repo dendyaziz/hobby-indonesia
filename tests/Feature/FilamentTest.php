@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use Filament\Facades\Filament;
 use Filament\Auth\Pages\Login;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

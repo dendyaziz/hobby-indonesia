@@ -9,5 +9,6 @@ use Filament\Resources\Pages\EditRecord;
 class EditResellerBanner extends EditRecord
 {
     use HasGroupBreadcrumbs;
+
     protected static string $resource = ResellerBannerResource::class;
 }

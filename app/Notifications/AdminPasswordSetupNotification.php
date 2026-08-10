@@ -3,9 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
 class AdminPasswordSetupNotification extends Notification
 {
@@ -34,7 +34,7 @@ class AdminPasswordSetupNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+        $url = URL::temporarySignedRoute(
             'filament.admin.password.setup',
             now()->addDays(7),
             ['user' => $notifiable->id]

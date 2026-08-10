@@ -1,8 +1,7 @@
 <?php
 
-use App\Filament\Resources\HeroBanners\Pages\CreateHeroBanner;
-use App\Filament\Resources\HeroBanners\Pages\ListHeroBanners;
 use App\Filament\Resources\ProductBanners\Pages\CreateProductBanner;
+use App\Filament\Resources\ProductBanners\Pages\ListProductBanners;
 use App\Filament\Resources\ResellerBanners\Pages\CreateResellerBanner;
 use App\Models\Banner;
 use App\Models\User;
@@ -25,15 +24,15 @@ beforeEach(function () {
 });
 
 it('can load the banner index and create pages for all placements', function () {
-    Livewire::test(ListHeroBanners::class)->assertOk();
-    Livewire::test(CreateHeroBanner::class)->assertOk();
+    Livewire::test(ListProductBanners::class)->assertOk();
+    Livewire::test(CreateProductBanner::class)->assertOk();
 });
 
-it('can create a hero banner and automatically assign position and placement without dates', function () {
-    Livewire::test(CreateHeroBanner::class)
+it('can create a product banner and automatically assign position and placement without dates', function () {
+    Livewire::test(CreateProductBanner::class)
         ->fillForm([
-            'title' => 'Hero Banner 1',
-            'image' => UploadedFile::fake()->image('hero1.jpg'),
+            'title' => 'Product Banner 1',
+            'image' => UploadedFile::fake()->image('prod1.jpg'),
             'type' => 'none',
             'status' => 'active',
         ])
@@ -41,18 +40,18 @@ it('can create a hero banner and automatically assign position and placement wit
         ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas('banners', [
-        'title' => 'Hero Banner 1',
-        'placement' => 'homepage--hero',
+        'title' => 'Product Banner 1',
+        'placement' => 'product-page--top',
         'position' => 1,
         'start_date' => null,
         'end_date' => null,
     ]);
 
-    // Create a second Hero Banner without dates
-    Livewire::test(CreateHeroBanner::class)
+    // Create a second Product Banner without dates
+    Livewire::test(CreateProductBanner::class)
         ->fillForm([
-            'title' => 'Hero Banner 2',
-            'image' => UploadedFile::fake()->image('hero2.jpg'),
+            'title' => 'Product Banner 2',
+            'image' => UploadedFile::fake()->image('prod2.jpg'),
             'type' => 'none',
             'status' => 'active',
         ])
@@ -60,8 +59,8 @@ it('can create a hero banner and automatically assign position and placement wit
         ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas('banners', [
-        'title' => 'Hero Banner 2',
-        'placement' => 'homepage--hero',
+        'title' => 'Product Banner 2',
+        'placement' => 'product-page--top',
         'position' => 2,
         'start_date' => null,
         'end_date' => null,
@@ -69,24 +68,7 @@ it('can create a hero banner and automatically assign position and placement wit
 });
 
 it('scopes position sequences separately for each placement', function () {
-    // 1. Create a Hero Banner (should get position 1)
-    Livewire::test(CreateHeroBanner::class)
-        ->fillForm([
-            'title' => 'Hero Banner A',
-            'image' => UploadedFile::fake()->image('heroa.jpg'),
-            'type' => 'none',
-            'status' => 'active',
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $this->assertDatabaseHas('banners', [
-        'title' => 'Hero Banner A',
-        'placement' => 'homepage--hero',
-        'position' => 1,
-    ]);
-
-    // 2. Create a Product Banner (should get position 1, not 2!)
+    // 1. Create a Product Banner (should get position 1)
     Livewire::test(CreateProductBanner::class)
         ->fillForm([
             'title' => 'Product Banner A',
@@ -103,7 +85,7 @@ it('scopes position sequences separately for each placement', function () {
         'position' => 1,
     ]);
 
-    // 3. Create a Reseller Banner (should get position 1)
+    // 2. Create a Reseller Banner (should get position 1)
     Livewire::test(CreateResellerBanner::class)
         ->fillForm([
             'title' => 'Reseller Banner A',
@@ -122,7 +104,7 @@ it('scopes position sequences separately for each placement', function () {
 });
 
 it('requires url when type is link', function () {
-    Livewire::test(CreateHeroBanner::class)
+    Livewire::test(CreateProductBanner::class)
         ->fillForm([
             'title' => 'Linked Banner',
             'image' => UploadedFile::fake()->image('link.jpg'),
@@ -135,7 +117,7 @@ it('requires url when type is link', function () {
 });
 
 it('validates that end_date cannot be before start_date', function () {
-    Livewire::test(CreateHeroBanner::class)
+    Livewire::test(CreateProductBanner::class)
         ->fillForm([
             'title' => 'Date Test Banner',
             'image' => UploadedFile::fake()->image('date.jpg'),
@@ -149,7 +131,7 @@ it('validates that end_date cannot be before start_date', function () {
 });
 
 it('allows start_date to be set while end_date remains null (indefinitely active)', function () {
-    Livewire::test(CreateHeroBanner::class)
+    Livewire::test(CreateProductBanner::class)
         ->fillForm([
             'title' => 'Indefinitely Scheduled Banner',
             'image' => UploadedFile::fake()->image('indefinite.jpg'),
@@ -169,7 +151,7 @@ it('allows start_date to be set while end_date remains null (indefinitely active
 });
 
 it('allows end_date to be set while start_date remains null (scheduled end only)', function () {
-    Livewire::test(CreateHeroBanner::class)
+    Livewire::test(CreateProductBanner::class)
         ->fillForm([
             'title' => 'Scheduled End Only Banner',
             'image' => UploadedFile::fake()->image('endonly.jpg'),
@@ -191,7 +173,7 @@ it('allows end_date to be set while start_date remains null (scheduled end only)
 it('shows status as Scheduled if active and start_date is in the future', function () {
     $futureBanner = Banner::factory()->create([
         'title' => 'Future Banner',
-        'placement' => 'homepage--hero',
+        'placement' => 'product-page--top',
         'status' => 'active',
         'start_date' => now()->addDays(5)->startOfDay(),
         'end_date' => null,
@@ -199,13 +181,13 @@ it('shows status as Scheduled if active and start_date is in the future', functi
 
     $activeBanner = Banner::factory()->create([
         'title' => 'Active Banner',
-        'placement' => 'homepage--hero',
+        'placement' => 'product-page--top',
         'status' => 'active',
         'start_date' => now()->subDays(2)->startOfDay(),
         'end_date' => now()->addDays(2)->startOfDay(),
     ]);
 
-    Livewire::test(ListHeroBanners::class)
+    Livewire::test(ListProductBanners::class)
         ->assertCanRenderTableColumn('status')
         ->assertTableColumnFormattedStateSet('status', 'Scheduled', record: $futureBanner)
         ->assertTableColumnFormattedStateSet('status', 'Active', record: $activeBanner);
@@ -214,19 +196,19 @@ it('shows status as Scheduled if active and start_date is in the future', functi
 it('shows status as Expired if active and end_date is in the past', function () {
     $expiredBanner = Banner::factory()->create([
         'title' => 'Expired Banner',
-        'placement' => 'homepage--hero',
+        'placement' => 'product-page--top',
         'status' => 'active',
         'start_date' => now()->subDays(5)->startOfDay(),
         'end_date' => now()->subDays(1)->startOfDay(),
     ]);
 
-    Livewire::test(ListHeroBanners::class)
+    Livewire::test(ListProductBanners::class)
         ->assertCanRenderTableColumn('status')
         ->assertTableColumnFormattedStateSet('status', 'Expired', record: $expiredBanner);
 });
 
 it('includes the navigation group in breadcrumbs', function () {
-    $breadcrumbs = Livewire::test(ListHeroBanners::class)
+    $breadcrumbs = Livewire::test(ListProductBanners::class)
         ->instance()
         ->getBreadcrumbs();
 

@@ -4,18 +4,18 @@ use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+    $this->seed(RolesAndPermissionsSeeder::class);
     $user = User::factory()->create();
     $user->assignRole('Super Admin');
     $this->actingAs($user);
@@ -63,7 +63,7 @@ it('correctly computes status column for users', function () {
 });
 
 it('can create a user', function () {
-    $writerRole = \Spatie\Permission\Models\Role::where('name', 'Writer')->first();
+    $writerRole = Role::where('name', 'Writer')->first();
 
     Livewire::test(CreateUser::class)
         ->fillForm([
@@ -84,7 +84,7 @@ it('can create a user', function () {
 });
 
 it('can edit a user', function () {
-    $writerRole = \Spatie\Permission\Models\Role::where('name', 'Writer')->first();
+    $writerRole = Role::where('name', 'Writer')->first();
     $user = User::factory()->create([
         'name' => 'Old Name',
     ]);
@@ -110,6 +110,7 @@ it('hides Super Admin role option when creating a user', function () {
     Livewire::test(CreateUser::class)
         ->assertFormFieldExists('roles', function (Select $field): bool {
             $options = $field->getOptions();
+
             return ! array_key_exists('Super Admin', $options) && ! in_array('Super Admin', $options);
         });
 });
@@ -138,7 +139,7 @@ it('enables email field when creating a new user', function () {
 });
 
 it('disables roles field when editing a Super Admin user', function () {
-    $superAdminRole = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
+    $superAdminRole = Role::where('name', 'Super Admin')->first();
     $superAdmin = User::factory()->create();
     $superAdmin->assignRole($superAdminRole);
 

@@ -10,6 +10,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListProductBanners extends ListRecords
 {
     use HasGroupBreadcrumbs;
+
     protected static string $resource = ProductBannerResource::class;
 
     protected function getHeaderActions(): array

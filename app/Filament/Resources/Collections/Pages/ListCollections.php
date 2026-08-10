@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Collections\Pages;
 
-use App\Filament\Resources\Collections\CollectionResource;
 use App\Filament\Resources\Banners\Traits\HasGroupBreadcrumbs;
+use App\Filament\Resources\Collections\CollectionResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 

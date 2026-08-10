@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Testimonies\Schemas;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class TestimonyForm
 {

@@ -8,15 +8,15 @@ use App\Filament\Resources\Articles\Pages\ListArticles;
 use App\Filament\Resources\Articles\Pages\ViewArticle;
 use App\Filament\Resources\Articles\Schemas\ArticleForm;
 use App\Filament\Resources\Articles\Tables\ArticlesTable;
-use Filament\Pages\Enums\SubNavigationPosition;
-use Filament\Resources\Pages\Page;
 use App\Models\Article;
 use BackedEnum;
-use UnitEnum;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class ArticleResource extends Resource
 {

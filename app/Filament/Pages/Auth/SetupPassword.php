@@ -6,6 +6,7 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
@@ -73,11 +74,11 @@ class SetupPassword extends SimplePage
 
         $userModel = User::findOrFail($this->user);
         $userModel->update([
-            'password'     => Hash::make($data['password']),
+            'password' => Hash::make($data['password']),
             'activated_at' => now(),
         ]);
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('Password set successfully.')
             ->success()
             ->send();
@@ -85,12 +86,12 @@ class SetupPassword extends SimplePage
         $this->redirectRoute('filament.admin.auth.login');
     }
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         return 'Setup Password';
     }
 
-    public function getHeading(): string | Htmlable | null
+    public function getHeading(): string|Htmlable|null
     {
         return 'Setup Password';
     }

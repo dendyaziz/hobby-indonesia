@@ -6,6 +6,7 @@ use App\Filament\Resources\Events\Pages\ListEvents;
 use App\Models\Event;
 use App\Models\Partner;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -15,8 +16,10 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
     Storage::fake('s3');
 });

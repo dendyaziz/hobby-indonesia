@@ -9,20 +9,18 @@ abstract class BasePolicy
     /**
      * The name of the resource (e.g., 'Article', 'Faq').
      * Used to dynamically check 'view {resource}' and 'manage {resource}'.
-     *
-     * @var string
      */
     protected string $resourceName;
 
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo("view {$this->resourceName}") || 
+        return $user->hasPermissionTo("view {$this->resourceName}") ||
                $user->hasPermissionTo("manage {$this->resourceName}");
     }
 
     public function view(User $user, $model): bool
     {
-        return $user->hasPermissionTo("view {$this->resourceName}") || 
+        return $user->hasPermissionTo("view {$this->resourceName}") ||
                $user->hasPermissionTo("manage {$this->resourceName}");
     }
 

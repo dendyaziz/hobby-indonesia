@@ -4,10 +4,10 @@ namespace App\Filament\Resources\ProductBanners;
 
 use App\Filament\Resources\Banners\Schemas\BannerForm;
 use App\Filament\Resources\Banners\Tables\BannersTable;
-use App\Models\ProductBanner;
 use App\Filament\Resources\ProductBanners\Pages\CreateProductBanner;
 use App\Filament\Resources\ProductBanners\Pages\EditProductBanner;
 use App\Filament\Resources\ProductBanners\Pages\ListProductBanners;
+use App\Models\ProductBanner;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

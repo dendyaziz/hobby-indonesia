@@ -5,6 +5,7 @@ use App\Filament\Resources\Articles\Pages\EditArticle;
 use App\Filament\Resources\Articles\Pages\ListArticles;
 use App\Models\Article;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -16,8 +17,10 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
     Storage::fake('s3');
 });
@@ -118,8 +121,8 @@ it('has correct content rich editor configuration', function () {
     $component = Livewire::test(CreateArticle::class);
     $schema = $component->instance()->getSchema('form');
 
-    $contentField = collect($schema->getComponents())
-        ->first(fn ($component) => $component->getName() === 'content');
+    $contentField = collect($schema->getFlatComponents())
+        ->first(fn ($component) => method_exists($component, 'getName') && $component->getName() === 'content');
 
     /** @var RichEditor $contentField */
     expect($contentField)->not->toBeNull();

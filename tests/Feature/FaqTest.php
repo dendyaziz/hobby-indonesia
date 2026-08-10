@@ -5,6 +5,7 @@ use App\Filament\Resources\Faqs\Pages\EditFaq;
 use App\Filament\Resources\Faqs\Pages\ListFaqs;
 use App\Models\Faq;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -12,8 +13,10 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $user = User::factory()->create();
+    $user->assignRole('Super Admin');
     $this->actingAs($user);
 });
 

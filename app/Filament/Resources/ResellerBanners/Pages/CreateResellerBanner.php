@@ -9,5 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateResellerBanner extends CreateRecord
 {
     use HasGroupBreadcrumbs;
+
     protected static string $resource = ResellerBannerResource::class;
 }

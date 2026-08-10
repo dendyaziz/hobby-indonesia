@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class CollectionsTable
 {
@@ -28,13 +29,12 @@ class CollectionsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => \Illuminate\Support\Str::headline($state))
-                    ->color(fn (string $state): string =>
-                        match ($state) {
-                            'active' => 'success',
-                            'inactive' => 'danger',
-                            default => 'gray',
-                        }
+                    ->formatStateUsing(fn (string $state): string => Str::headline($state))
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                        default => 'gray',
+                    }
                     ),
                 TextColumn::make('created_at')
                     ->dateTime()

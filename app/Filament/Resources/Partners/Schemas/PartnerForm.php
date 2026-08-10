@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Partners\Schemas;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class PartnerForm
 {
@@ -30,8 +30,8 @@ class PartnerForm
                                     ->imagePreviewHeight(250)
                                     ->required(),
                             ]),
-                      ])
-                      ->columnSpan(['lg' => 2]),
+                    ])
+                    ->columnSpan(['lg' => 2]),
 
                 Group::make()
                     ->schema([

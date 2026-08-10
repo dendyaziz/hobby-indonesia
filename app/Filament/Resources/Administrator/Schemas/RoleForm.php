@@ -16,7 +16,7 @@ class RoleForm
         $groups = [
             'Public' => ['Article', 'Testimony', 'Faq', 'Partner', 'SocialMedia', 'Contact'],
             'Listing' => ['Product', 'Category', 'Collection'],
-            'Homepage' => ['HeroBanner', 'ProductBanner'],
+            'Homepage' => ['ProductBanner'],
             'Reseller' => ['Event', 'ResellerBanner'],
             'Administrator' => ['User', 'Role'],
         ];

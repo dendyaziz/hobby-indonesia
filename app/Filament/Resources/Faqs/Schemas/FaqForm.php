@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Faqs\Schemas;
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class FaqForm
 {
@@ -32,7 +32,7 @@ class FaqForm
                                 'redo',
                             ])
                             ->columnSpanFull(),
-                    ])
+                    ]),
             ]);
     }
 }

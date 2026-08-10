@@ -9,11 +9,11 @@ use App\Filament\Resources\Faqs\Schemas\FaqForm;
 use App\Filament\Resources\Faqs\Tables\FaqsTable;
 use App\Models\Faq;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class FaqResource extends Resource
 {

@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Policies\PermissionPolicy;
+use App\Policies\RolePolicy;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Gate;
-use \Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::policy(\Spatie\Permission\Models\Role::class, \App\Policies\RolePolicy::class);
-        Gate::policy(\Spatie\Permission\Models\Permission::class, \App\Policies\PermissionPolicy::class);
+        Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Permission::class, PermissionPolicy::class);
 
         Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Admin') ? true : null;

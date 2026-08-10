@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,8 +13,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Event extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\EventFactory> */
+    /** @use HasFactory<EventFactory> */
     use HasFactory, HasUuids;
+
     use InteractsWithMedia;
 
     /**
