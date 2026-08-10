@@ -32,6 +32,7 @@ class ProductController extends Controller
             'price_to',
             'sort',
             'search',
+            'exclude_slug',
         ]);
 
         // Normalize filters to ensure stable cache keys
@@ -114,6 +115,17 @@ class ProductController extends Controller
             }
             if (isset($filters['price_to'])) {
                 $query->whereRaw('COALESCE(discounted_price, price) <= ?', [(int) $filters['price_to']]);
+            }
+
+            // Exclude slug filter
+            if (! empty($filters['exclude_slug'])) {
+                $excludeSlugs = is_array($filters['exclude_slug'])
+                    ? $filters['exclude_slug']
+                    : array_filter(explode(',', (string) $filters['exclude_slug']));
+
+                if (! empty($excludeSlugs)) {
+                    $query->whereNotIn('slug', $excludeSlugs);
+                }
             }
 
             // Sort logic

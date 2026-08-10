@@ -97,11 +97,29 @@ test('it caches article list and detail data and invalidates both when an articl
     $this->getJson('/api/v1/articles')->assertSuccessful();
     $this->getJson('/api/v1/articles/cached-article')->assertSuccessful();
 
-    expect(Cache::tags(['public', 'article'])->has('article__pagination_limit_10_page_1'))->toBeTrue();
+    expect(Cache::tags(['public', 'article'])->has('article__pagination_limit_10_page_1_exclude_none'))->toBeTrue();
     expect(Cache::tags(['public', 'article'])->has('article__cached-article'))->toBeTrue();
 
     $article->update(['title' => 'Updated Article']);
 
-    expect(Cache::tags(['public', 'article'])->has('article__pagination_limit_10_page_1'))->toBeFalse();
+    expect(Cache::tags(['public', 'article'])->has('article__pagination_limit_10_page_1_exclude_none'))->toBeFalse();
     expect(Cache::tags(['public', 'article'])->has('article__cached-article'))->toBeFalse();
+});
+
+test('it excludes articles by exclude_slug parameter', function () {
+    Article::factory()->create([
+        'title' => 'Article 1',
+        'slug' => 'article-1',
+        'status' => 'published',
+    ]);
+    Article::factory()->create([
+        'title' => 'Article 2',
+        'slug' => 'article-2',
+        'status' => 'published',
+    ]);
+
+    $this->getJson('/api/v1/articles?exclude_slug=article-1')
+        ->assertSuccessful()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.slug', 'article-2');
 });

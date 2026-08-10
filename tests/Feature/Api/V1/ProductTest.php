@@ -381,3 +381,26 @@ test('it returns themes list with counts', function () {
             'products_count' => 0,
         ]);
 });
+
+test('it filters products by exclude_slug parameter', function () {
+    Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+
+    Product::create([
+        'name' => 'Game 2',
+        'slug' => 'game-2',
+        'availability' => 'Available',
+        'price' => 20000,
+        'description' => 'Description 2',
+    ]);
+
+    $this->getJson('/api/v1/products?exclude_slug=game-1')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.slug', 'game-2');
+});

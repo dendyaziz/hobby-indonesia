@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class CollectionController extends Controller
@@ -13,7 +14,7 @@ class CollectionController extends Controller
     /**
      * Display the products inside a collection.
      */
-    public function products(Collection $collection): JsonResponse
+    public function products(Request $request, Collection $collection): JsonResponse
     {
         $slug = $collection->slug;
 
@@ -26,6 +27,19 @@ class CollectionController extends Controller
 
             return ProductResource::collection($products)->resolve();
         });
+
+        $excludeSlug = $request->query('exclude_slug');
+        if (! empty($excludeSlug)) {
+            $excludeSlugs = is_array($excludeSlug)
+                ? $excludeSlug
+                : array_filter(explode(',', (string) $excludeSlug));
+
+            if (! empty($excludeSlugs)) {
+                $data = array_values(array_filter($data, function (array $product) use ($excludeSlugs): bool {
+                    return ! in_array($product['slug'] ?? null, $excludeSlugs, true);
+                }));
+            }
+        }
 
         return response()->json(['data' => $data]);
     }

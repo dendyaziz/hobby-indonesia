@@ -17,15 +17,29 @@ class ArticleController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $limit = min(max($request->integer('limit', 10), 1), 100);
+        $limit = min(max($request->integer('limit', $request->integer('per_page', 10)), 1), 100);
         $page = max($request->integer('page', 1), 1);
-        $key = "article__pagination_limit_{$limit}_page_{$page}";
+        $excludeSlug = $request->query('exclude_slug');
 
-        $data = Cache::tags(['public', 'article'])->remember($key, now()->addDays(30), function () use ($limit, $page): array {
-            $articles = Article::query()
+        $excludeHash = $excludeSlug ? md5(is_array($excludeSlug) ? implode(',', $excludeSlug) : (string) $excludeSlug) : 'none';
+        $key = "article__pagination_limit_{$limit}_page_{$page}_exclude_{$excludeHash}";
+
+        $data = Cache::tags(['public', 'article'])->remember($key, now()->addDays(30), function () use ($limit, $page, $excludeSlug): array {
+            $query = Article::query()
                 ->with('media')
-                ->where('status', 'published')
-                ->orderByDesc('created_at')
+                ->where('status', 'published');
+
+            if (! empty($excludeSlug)) {
+                $excludeSlugs = is_array($excludeSlug)
+                    ? $excludeSlug
+                    : array_filter(explode(',', (string) $excludeSlug));
+
+                if (! empty($excludeSlugs)) {
+                    $query->whereNotIn('slug', $excludeSlugs);
+                }
+            }
+
+            $articles = $query->orderByDesc('created_at')
                 ->paginate($limit, ['*'], 'page', $page);
 
             return [

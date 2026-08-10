@@ -127,3 +127,40 @@ test('it flushes the collection products cache when collection membership change
     $item->delete();
     expect(Cache::tags(['public'])->has($key))->toBeFalse();
 });
+
+test('it excludes product by exclude_slug parameter', function () {
+    $collection = Collection::factory()->create(['slug' => 'best-seller', 'title' => 'Best Seller']);
+
+    $product1 = Product::create([
+        'name' => 'Game 1',
+        'slug' => 'game-1',
+        'availability' => 'Available',
+        'price' => 10000,
+        'description' => 'Description 1',
+    ]);
+
+    $product2 = Product::create([
+        'name' => 'Game 2',
+        'slug' => 'game-2',
+        'availability' => 'Available',
+        'price' => 20000,
+        'description' => 'Description 2',
+    ]);
+
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product1->id,
+        'position' => 1,
+    ]);
+
+    CollectionItem::create([
+        'collection_id' => $collection->id,
+        'product_id' => $product2->id,
+        'position' => 2,
+    ]);
+
+    $this->getJson('/api/v1/collections/best-seller/products?exclude_slug=game-1')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.slug', 'game-2');
+});
