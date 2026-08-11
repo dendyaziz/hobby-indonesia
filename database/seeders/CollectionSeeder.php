@@ -17,6 +17,7 @@ class CollectionSeeder extends Seeder
             [
                 'title' => 'Best Seller',
                 'status' => 'active',
+                'position' => 1,
             ]
         );
     }
